@@ -211,7 +211,7 @@ class Home extends Component {
                     open={this.state.form_dialogue_open}
                     title="Add client"
                 >
-                    <FormAddClient/>
+                    <FormAddClient handleClose={this.handleCloseDialogue}/>
                 </FormModal>
             </Container>
         )

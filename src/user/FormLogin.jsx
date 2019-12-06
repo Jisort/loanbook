@@ -72,9 +72,6 @@ class FormLogin extends Component {
                 message_variant={this.state.message_variant}
                 message_text={this.state.message_text}
             />;
-            // message = <div className={this.state.alert_class} role="alert">
-            //     {this.state.alert_message}
-            // </div>;
         }
         return (
             <Paper className="Login-container">
