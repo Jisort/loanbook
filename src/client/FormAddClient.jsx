@@ -44,7 +44,7 @@ class ClientDetailsForm extends Component {
         })
     }
 
-    handleChange = date => {
+    handleDateChange = date => {
         this.setState({
             selected_date: date
         });
@@ -134,71 +134,74 @@ class ClientDetailsForm extends Component {
         }
 
         return (
-            <Grid className="container">
-                {message}
-                <form onSubmit={(e) => this.handleSubmitClient(e)} id="client-details-form">
-                    <DialogContent>
-                        <Grid container spacing={3}>
-                            <Grid item xs={6}>
-                                <TextField fullWidth type="text" label="First name" name="first_name" required={true}/>
+            <Grid container>
+                <Grid item xs={12}>
+                    {message}
+                    <form onSubmit={(e) => this.handleSubmitClient(e)} id="client-details-form">
+                        <DialogContent>
+                            <Grid container spacing={3}>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth type="text" label="First name" name="first_name" required={true}/>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth type="text" label="Last name" name="last_name" required={true}/>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={6}>
-                                <TextField fullWidth type="text" label="Last name" name="last_name" required={true}/>
+                            <Grid container spacing={3}>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth type="text" label="ID no" name="id_no" required={true}/>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel id="gender-select-label">Gender</InputLabel>
+                                    <Select fullWidth name="gender" labelId="gender-select-label" required={true}>
+                                        <MenuItem value="male">Male</MenuItem>
+                                        <MenuItem value="female">Female</MenuItem>
+                                        <MenuItem value="other">Other</MenuItem>
+                                    </Select>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid container spacing={3}>
-                            <Grid item xs={6}>
-                                <TextField fullWidth type="text" label="ID no" name="id_no" required={true}/>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <InputLabel id="gender-select-label">Gender</InputLabel>
-                                <Select fullWidth name="gender" labelId="gender-select-label" required={true}>
-                                    <MenuItem value="male">Male</MenuItem>
-                                    <MenuItem value="female">Female</MenuItem>
-                                    <MenuItem value="other">Other</MenuItem>
-                                </Select>
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <DatePicker
-                                    label="Date of birth"
-                                    maxDate={this.state._18_years_ago}
-                                    value={this.state.selected_date}
-                                    format="YYYY-MM-DD"
-                                    fullWidth={true}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <FormControl fullWidth>
-                                    <AutocompleteSelect
-                                        label="Country"
-                                        optionLabel="label"
-                                        data={countries_list}
-                                        onChange={(value) => this.handleCountryChange(value)}
+                            <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <DatePicker
+                                        label="Date of birth"
+                                        maxDate={this.state._18_years_ago}
+                                        value={this.state.selected_date}
+                                        onChange={this.handleDateChange}
+                                        format="YYYY-MM-DD"
+                                        fullWidth={true}
                                     />
-                                </FormControl>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <TextField fullWidth type="email" label="Email" name="email" required={true}/>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <FormControl fullWidth>
+                                        <AutocompleteSelect
+                                            label="Country"
+                                            optionLabel="label"
+                                            data={countries_list}
+                                            onChange={(value) => this.handleCountryChange(value)}
+                                        />
+                                    </FormControl>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <FormControl fullWidth>
-                                    <TextField fullWidth type="text" label="Phone number"
-                                               name="mobile_no" ref="mobile_no" required={true}
-                                    />
-                                </FormControl>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <TextField fullWidth type="email" label="Email" name="email" required={true}/>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </DialogContent>
-                    {add_client_button}
-                </form>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <FormControl fullWidth>
+                                        <TextField fullWidth type="text" label="Phone number"
+                                                   name="mobile_no" ref="mobile_no" required={true}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                        {add_client_button}
+                    </form>
+                </Grid>
             </Grid>
         )
     }
