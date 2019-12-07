@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/loanbook/static/css/main.0e4b8801.chunk.css",
+    "main.js": "/loanbook/static/js/main.78a760d8.chunk.js",
+    "main.js.map": "/loanbook/static/js/main.78a760d8.chunk.js.map",
+    "runtime-main.js": "/loanbook/static/js/runtime-main.21c09d2e.js",
+    "runtime-main.js.map": "/loanbook/static/js/runtime-main.21c09d2e.js.map",
+    "static/js/2.d45c5586.chunk.js": "/loanbook/static/js/2.d45c5586.chunk.js",
+    "static/js/2.d45c5586.chunk.js.map": "/loanbook/static/js/2.d45c5586.chunk.js.map",
+    "index.html": "/loanbook/index.html",
+    "precache-manifest.19e60bad32a2310c76e4b4e7d52eb204.js": "/loanbook/precache-manifest.19e60bad32a2310c76e4b4e7d52eb204.js",
+    "service-worker.js": "/loanbook/service-worker.js",
+    "static/css/main.0e4b8801.chunk.css.map": "/loanbook/static/css/main.0e4b8801.chunk.css.map",
+    "static/media/App.css": "/loanbook/static/media/background.22ebb32a.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.21c09d2e.js",
+    "static/js/2.d45c5586.chunk.js",
+    "static/css/main.0e4b8801.chunk.css",
+    "static/js/main.78a760d8.chunk.js"
+  ]
+}
