@@ -13,7 +13,7 @@ export default class FormModal extends Component {
         return (
             <div>
                 <Dialog
-                    fullWidth="sm"
+                    fullWidth
                     maxWidth="sm"
                     open={this.props.open}
                     onClose={this.props['handleClose']}

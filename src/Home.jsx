@@ -7,13 +7,11 @@ import {
     setSessionVariable,
     fetchDataIfNeeded
 } from './actions/actions';
-import {getUrlData, dynamicSort, numberWithCommas} from "./functions/componentActions";
+import {getUrlData, dynamicSort} from "./functions/componentActions";
 import FormModal from "./components/FormModal";
-// import LoanDetailsForm from "./LoanDetailsForm";
 // import ApproveLoanForm from "./ApproveLoanForm";
 import moment from "moment";
-import DataTable from "./components/DataTable";
-import {Card, CardContent, Container, Button, Fab, Box} from "@material-ui/core";
+import {Container, Button, Fab, Box} from "@material-ui/core";
 import MaterialTable from 'material-table';
 import {Add} from '@material-ui/icons';
 import FormAddClient from "./client/FormAddClient";

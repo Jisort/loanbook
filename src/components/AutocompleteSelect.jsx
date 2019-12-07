@@ -33,7 +33,7 @@ export default function CountrySelect(props) {
                 option: classes.option,
             }}
             autoHighlight
-            onChange={(e, option) => props['onChange'](option)}
+            onChange={(e, option) => props['onChange'](option || {})}
             getOptionLabel={option => option.label}
             renderOption={option => (
                 <React.Fragment>
