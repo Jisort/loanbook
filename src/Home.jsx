@@ -9,7 +9,6 @@ import {
 } from './actions/actions';
 import {getUrlData, dynamicSort, numberWithCommas} from "./functions/componentActions";
 import FormModal from "./components/FormModal";
-// import ClientDetailsForm from "./ClientDetailsForm";
 // import LoanDetailsForm from "./LoanDetailsForm";
 // import ApproveLoanForm from "./ApproveLoanForm";
 import moment from "moment";
@@ -18,13 +17,15 @@ import {Card, CardContent, Container, Button, Fab, Box} from "@material-ui/core"
 import MaterialTable from 'material-table';
 import {Add} from '@material-ui/icons';
 import FormAddClient from "./client/FormAddClient";
+import FormIssueLoan from "./loan/FormIssueLoan";
 
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
             selected_client: {},
-            form_dialogue_open: true
+            add_client_dialogue_open: false,
+            issue_loan_dialogue_open: false,
         }
     }
 
@@ -72,15 +73,15 @@ class Home extends Component {
         </div>
     }
 
-    handleCloseDialogue = () => {
+    handleCloseDialogue = (form) => {
         this.setState({
-            form_dialogue_open: false
+            [form]: false
         })
     };
 
-    handleOpenDialogue = () => {
+    handleOpenDialogue = (form) => {
         this.setState({
-            form_dialogue_open: true
+            [form]: true
         })
     };
 
@@ -169,9 +170,9 @@ class Home extends Component {
             }, {
                 icon: 'add',
                 tooltip: 'Issue Loan',
-                onClick: (event, rowData) => {
-                    // Do save operation
-                }
+                onClick: (event, rowData) => this.setState({
+                    selected_client: rowData
+                }, () => this.handleOpenDialogue('issue_loan_dialogue_open'))
             }, {
                 icon: 'done',
                 tooltip: 'Approve Loan',
@@ -190,7 +191,8 @@ class Home extends Component {
         return (
             <Container maxWidth="xl" className="Main-container">
                 <Box pt={2}>
-                    <Fab variant="extended" color="default" onClick={this.handleOpenDialogue}>
+                    <Fab variant="extended" color="default"
+                         onClick={(e) => this.handleOpenDialogue('add_client_dialogue_open')}>
                         <Add/>
                         Add client
                     </Fab>
@@ -206,12 +208,25 @@ class Home extends Component {
                     />
                 </Box>
                 <FormModal
-                    handleClickOpen={this.handleOpenDialogue}
-                    handleClose={this.handleCloseDialogue}
-                    open={this.state.form_dialogue_open}
+                    handleClickOpen={(e) => this.handleOpenDialogue('add_client_dialogue_open')}
+                    handleClose={(e) => this.handleCloseDialogue('add_client_dialogue_open')}
+                    open={this.state.add_client_dialogue_open}
                     title="Add client"
                 >
-                    <FormAddClient/>
+                    <FormAddClient
+                        handleClose={(e) => this.handleCloseDialogue('add_client_dialogue_open')}
+                    />
+                </FormModal>
+                <FormModal
+                    handleClickOpen={(e) => this.handleOpenDialogue('issue_loan_dialogue_open')}
+                    handleClose={(e) => this.handleCloseDialogue('issue_loan_dialogue_open')}
+                    open={this.state.issue_loan_dialogue_open}
+                    title="Issue loan"
+                >
+                    <FormIssueLoan
+                        selected_client={this.state.selected_client}
+                        handleClose={(e) => this.handleCloseDialogue('issue_loan_dialogue_open')}
+                    />
                 </FormModal>
             </Container>
         )

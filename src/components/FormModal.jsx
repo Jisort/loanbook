@@ -20,17 +20,7 @@ export default class FormModal extends Component {
                     disableBackdropClick
                     aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">{this.props['title']}</DialogTitle>
-                    <DialogContent>
-                        {this.props.children}
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.props['handleClose']} color="primary">
-                            Add client
-                        </Button>
-                        <Button onClick={this.props['handleClose']} color="primary">
-                            Close
-                        </Button>
-                    </DialogActions>
+                    {this.props.children}
                 </Dialog>
             </div>
         );

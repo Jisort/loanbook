@@ -6,12 +6,10 @@ import {
 } from '@material-ui/pickers';
 
 export default function App(props) {
-    const [selectedDate, handleDateChange] = useState(new Date());
-
     return (
         <MuiPickersUtilsProvider utils={MomentUtils}>
             <DatePicker
-                onChange={handleDateChange}
+                onChange={props['onChange']}
                 maxDate={props['maxDate']}
                 value={props['value']}
                 format={props['format']}
