@@ -16,6 +16,7 @@ import MaterialTable from 'material-table';
 import {Add} from '@material-ui/icons';
 import FormAddClient from "./client/FormAddClient";
 import FormIssueLoan from "./loan/FormIssueLoan";
+import FormApproveDisburseLoan from "./loan/FormApproveDisburseLoan";
 
 class Home extends Component {
     constructor(props) {
@@ -24,6 +25,7 @@ class Home extends Component {
             selected_client: {},
             add_client_dialogue_open: false,
             issue_loan_dialogue_open: false,
+            approve_loan_dialogue_open: false
         }
     }
 
@@ -174,9 +176,9 @@ class Home extends Component {
             }, {
                 icon: 'done',
                 tooltip: 'Approve Loan',
-                onClick: (event, rowData) => {
-                    // Do save operation
-                }
+                onClick: (event, rowData) => this.setState({
+                    selected_client: rowData
+                }, () => this.handleOpenDialogue('approve_loan_dialogue_open'))
             }, {
                 icon: 'payment',
                 tooltip: 'Add payment',
@@ -224,6 +226,22 @@ class Home extends Component {
                     <FormIssueLoan
                         selected_client={this.state.selected_client}
                         handleClose={(e) => this.handleCloseDialogue('issue_loan_dialogue_open')}
+                    />
+                </FormModal>
+                <FormModal
+                    handleClickOpen={(e) => this.handleOpenDialogue('approve_loan_dialogue_open')}
+                    handleClose={(e) => this.handleCloseDialogue('approve_loan_dialogue_open')}
+                    open={this.state.approve_loan_dialogue_open}
+                    title="Approve loan"
+                >
+                    <FormApproveDisburseLoan
+                        pending_loans={pending_loans}
+                        banks={banks}
+                        payments_mode={payments_mode}
+                        currencies={currencies}
+                        approved_loans={approved_loans}
+                        selected_client={this.state.selected_client}
+                        handleClose={(e) => this.handleCloseDialogue('approve_loan_dialogue_open')}
                     />
                 </FormModal>
             </Container>
