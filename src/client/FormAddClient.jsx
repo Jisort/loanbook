@@ -74,8 +74,8 @@ class ClientDetailsForm extends Component {
                 $("form#client-details-form")[0].reset();
                 const {sessionVariables, dispatch} = this.props;
                 let clients_url = sessionVariables['clients_url'] || '';
-                dispatch(fetchDataIfNeeded(clients_url));
                 dispatch(invalidateData(clients_url));
+                dispatch(fetchDataIfNeeded(clients_url));
             },
             (results) => {
                 let alert_message = extractResponseError(results);
@@ -153,7 +153,8 @@ class ClientDetailsForm extends Component {
                                 </Grid>
                                 <Grid item xs={6}>
                                     <InputLabel id="gender-select-label">Gender</InputLabel>
-                                    <Select fullWidth name="gender" labelId="gender-select-label" required={true}>
+                                    <Select fullWidth name="gender" labelId="gender-select-label"
+                                            defaultValue="male" required={true}>
                                         <MenuItem value="male">Male</MenuItem>
                                         <MenuItem value="female">Female</MenuItem>
                                         <MenuItem value="other">Other</MenuItem>

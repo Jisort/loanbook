@@ -113,8 +113,7 @@ export default function PrimarySearchAppBar(props) {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={props['handleLogout']}>Logout</MenuItem>
         </Menu>
     );
 
@@ -130,16 +129,8 @@ export default function PrimarySearchAppBar(props) {
             onClose={handleMobileMenuClose}
         >
             <MenuItem>
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="secondary">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Badge badgeContent={11} color="secondary">
+                <IconButton aria-label={`show  ${props['notifications_count']} new notifications`} color="inherit">
+                    <Badge badgeContent={props['notifications_count']} color="secondary">
                         <NotificationsIcon />
                     </Badge>
                 </IconButton>

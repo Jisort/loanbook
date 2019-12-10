@@ -65,7 +65,7 @@ class Menu extends Component {
         }
         return (
             <div>
-                <TopMenu brand_name="Loanbook" notifications_count={0}/>
+                <TopMenu brand_name="Loanbook" notifications_count={0} handleLogout={this.handleLogout}/>
                 {this.props.children}
             </div>
         )
