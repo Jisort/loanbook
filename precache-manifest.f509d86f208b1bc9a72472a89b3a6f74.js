@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1a268abc58dab9354ffb4ac3faf9f4da",
+    "revision": "227a506e2857a90c919a8fb866cdfd5f",
     "url": "/loanbook/index.html"
   },
   {
-    "revision": "4cbc309eba590808dd3f",
+    "revision": "37b54062e527e4464bb3",
     "url": "/loanbook/static/css/main.0e4b8801.chunk.css"
   },
   {
-    "revision": "953684322014f182eb30",
-    "url": "/loanbook/static/js/2.d45c5586.chunk.js"
+    "revision": "4a4d659a8e4391c0179e",
+    "url": "/loanbook/static/js/2.5d1deac0.chunk.js"
   },
   {
-    "revision": "4cbc309eba590808dd3f",
-    "url": "/loanbook/static/js/main.78a760d8.chunk.js"
+    "revision": "37b54062e527e4464bb3",
+    "url": "/loanbook/static/js/main.0e6168dd.chunk.js"
   },
   {
     "revision": "5e9b1b10cd1c39eb2457",
