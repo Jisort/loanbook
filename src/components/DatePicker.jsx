@@ -9,6 +9,9 @@ export default function App(props) {
     return (
         <MuiPickersUtilsProvider utils={MomentUtils}>
             <DatePicker
+                InputProps={{
+                    readOnly: props['readOnly'],
+                }}
                 onChange={props['onChange']}
                 maxDate={props['maxDate']}
                 value={props['value']}

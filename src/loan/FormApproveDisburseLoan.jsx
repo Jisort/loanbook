@@ -35,6 +35,14 @@ class ApproveLoanForm extends Component {
         });
     };
 
+    submitDisburseLoan(e, pending_loan) {
+        e.preventDefault();
+        this.setState({activity: true});
+        let disbursement_date = pending_loan['disbursement_date'];
+        let approved_amount = pending_loan['approved_amount'];
+        this.handleDisburseLoan(pending_loan, disbursement_date, approved_amount);
+    }
+
     handleDisburseLoan = (pending_loan, disbursement_date, approved_amount) => {
         const {banks, payments_mode, currencies} = this.props;
         let milliseconds = new Date().getTime();
@@ -62,8 +70,8 @@ class ApproveLoanForm extends Component {
                 });
                 const {sessionVariables, dispatch} = this.props;
                 let pending_disbursement_url = sessionVariables['pending_disbursement_url'] || '';
-                dispatch(fetchDataIfNeeded(pending_disbursement_url));
                 dispatch(invalidateData(pending_disbursement_url));
+                dispatch(fetchDataIfNeeded(pending_disbursement_url));
             },
             (results) => {
                 let alert_message = extractResponseError(results);
@@ -90,7 +98,11 @@ class ApproveLoanForm extends Component {
         };
         postAPIRequest(
             process_loan_url,
-            function () {
+            () => {
+                const {sessionVariables, dispatch} = this.props;
+                let pending_disbursement_url = sessionVariables['pending_disbursement_url'] || '';
+                dispatch(invalidateData(pending_disbursement_url));
+                dispatch(fetchDataIfNeeded(pending_disbursement_url));
                 callback();
             },
             (results) => {
@@ -117,7 +129,8 @@ class ApproveLoanForm extends Component {
         let formData = new FormData($("form#approve-loan")[0]);
         let disbursement_date = moment(this.state.selected_date).format('YYYY-MM-DD');
         let payload = {
-            disbursement_date: disbursement_date
+            disbursement_date: disbursement_date,
+            status: 9,
         };
         payload = formDataToPayload(formData, payload);
         let approve_loan_url = serverBaseUrl() + `/products/applied_loans/${pending_loan['id']}/`;
@@ -138,8 +151,8 @@ class ApproveLoanForm extends Component {
                 });
                 const {sessionVariables, dispatch} = this.props;
                 let pending_loans_url = sessionVariables['pending_loans_url'] || '';
-                dispatch(fetchDataIfNeeded(pending_loans_url));
                 dispatch(invalidateData(pending_loans_url));
+                dispatch(fetchDataIfNeeded(pending_loans_url));
             },
             (results) => {
                 let alert_message = extractResponseError(results);
@@ -175,10 +188,15 @@ class ApproveLoanForm extends Component {
             />;
         }
 
-        const {pending_loans, selected_client} = this.props;
+        const {pending_loans, selected_client, pending_disbursement} = this.props;
         let pending_loan = pending_loans.find(function (loan) {
             return loan['member'] === selected_client['id'];
         }) || {};
+        if (this.props['disburse_loan']) {
+            pending_loan = pending_disbursement.find(function (loan) {
+                return loan['member'] === selected_client['id'];
+            }) || {};
+        }
 
         let approve_loan_button = <DialogActions>
             <Button color="primary" type="submit">
@@ -188,49 +206,87 @@ class ApproveLoanForm extends Component {
                 Close
             </Button>
         </DialogActions>;
+        let disburse_loan_button = <DialogActions>
+            <Button color="primary" type="submit">
+                Disburse Loan
+            </Button>
+            <Button onClick={this.props['handleClose']} color="primary">
+                Close
+            </Button>
+        </DialogActions>;
         if (this.state.activity) {
             approve_loan_button = <FormActivityIndicator/>;
+            disburse_loan_button = <FormActivityIndicator/>;
         }
 
+        let disburse_approve_form = <form onSubmit={(e) => this.handleApproveLoan(e, pending_loan)}
+                                          id="approve-loan">
+            <DialogContent>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <TextField type="number" label="Approved amount" fullWidth
+                                   name="approved_amount" required={true} defaultValue={pending_loan['amount']}/>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <DatePicker
+                            label="Date of disbursement"
+                            value={this.state.selected_date}
+                            onChange={this.handleDateChange}
+                            format="YYYY-MM-DD"
+                            fullWidth={true}
+                        />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox checked={this.state.disburse_loan_checkbox}
+                                          onChange={(e) => this.handleDisburseLoanCheckbox(e)}
+                                          color="primary"
+                                />
+                            }
+                            label="Disburse loan"
+                        />
+                    </Grid>
+                </Grid>
+            </DialogContent>
+            {approve_loan_button}
+        </form>;
+        if (this.props['disburse_loan']) {
+            disburse_approve_form = <form onSubmit={(e) => this.submitDisburseLoan(e, pending_loan)} id="disburse-loan">
+                <DialogContent>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <TextField type="number" label="Amount" fullWidth
+                                       name="approved_amount" defaultValue={pending_loan['amount']}
+                                       InputProps={{
+                                           readOnly: true,
+                                       }}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <TextField type="text" label="Date" fullWidth
+                                       name="date" defaultValue={pending_loan['disbursement_date']}
+                                       InputProps={{
+                                           readOnly: true,
+                                       }}
+                            />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                {disburse_loan_button}
+            </form>;
+        }
         return (
             <Grid container>
                 <Grid item xs={12}>
                     {message}
-                    <form onSubmit={(e) => this.handleApproveLoan(e, pending_loan)} id="approve-loan">
-                        <DialogContent>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
-                                    <TextField type="number" label="Approved amount" fullWidth
-                                               name="approved_amount" required={true} defaultValue={pending_loan['amount']}/>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
-                                    <DatePicker
-                                        label="Date of disbursement"
-                                        value={this.state.selected_date}
-                                        onChange={this.handleDateChange}
-                                        format="YYYY-MM-DD"
-                                        fullWidth={true}
-                                    />
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox checked={this.state.disburse_loan_checkbox}
-                                                      onChange={(e) => this.handleDisburseLoanCheckbox(e)}
-                                                      color="primary"
-                                            />
-                                        }
-                                        label="Disburse loan"
-                                    />
-                                </Grid>
-                            </Grid>
-                        </DialogContent>
-                        {approve_loan_button}
-                    </form>
+                    {disburse_approve_form}
                 </Grid>
             </Grid>
         )
