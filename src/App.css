@@ -22,3 +22,7 @@
 .Main-container {
     margin-top: 76px;
 }
+
+.clickable {
+    cursor: pointer;
+}

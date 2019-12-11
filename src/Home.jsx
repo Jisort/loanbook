@@ -11,12 +11,12 @@ import {getUrlData, dynamicSort} from "./functions/componentActions";
 import FormModal from "./components/FormModal";
 // import ApproveLoanForm from "./ApproveLoanForm";
 import moment from "moment";
-import {Container, Button, Fab, Box} from "@material-ui/core";
+import {Container, Button, Fab, Box, Tooltip, IconButton} from "@material-ui/core";
 import MaterialTable from 'material-table';
-import {Add} from '@material-ui/icons';
 import FormAddClient from "./client/FormAddClient";
 import FormIssueLoan from "./loan/FormIssueLoan";
 import FormApproveDisburseLoan from "./loan/FormApproveDisburseLoan";
+import {Edit, Add, Check, Payment, AccountBalance} from '@material-ui/icons';
 
 class Home extends Component {
     constructor(props) {
@@ -25,7 +25,8 @@ class Home extends Component {
             selected_client: {},
             add_client_dialogue_open: false,
             issue_loan_dialogue_open: false,
-            approve_loan_dialogue_open: false
+            approve_loan_dialogue_open: false,
+            disburse_loan_dialogue_open: false
         }
     }
 
@@ -121,6 +122,66 @@ class Home extends Component {
         }
     }
 
+    renderActionButtons = (rowData) => {
+        const {pending_loans_data, pending_disbursement_data} = this.props;
+        let pending_loans = pending_loans_data['items'];
+        let pending_disbursement = pending_disbursement_data['items'];
+        let member_pending_loan = pending_loans.find(function (loan) {
+            return loan.member === rowData['id'];
+        });
+        let member_pending_disbursement = pending_disbursement.find(function (loan) {
+            return loan.member === rowData['id'];
+        });
+        let approve_loan_button_disabled = true;
+        let disburse_loan_button_disabled = true;
+        if (member_pending_loan) {
+            approve_loan_button_disabled = false;
+        }
+        if (member_pending_disbursement) {
+            disburse_loan_button_disabled = false;
+        }
+
+        return <Box display="flex" justifyContent="flex-end">
+            <Tooltip title="Edit client">
+                <IconButton aria-label="edit">
+                    <Edit/>
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Issue loan">
+                <IconButton aria-label="edit"
+                            onClick={(e) => this.setState({
+                                selected_client: rowData
+                            }, () => this.handleOpenDialogue('issue_loan_dialogue_open'))}
+                >
+                    <Add/>
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Approve loan">
+                <IconButton aria-label="edit" disabled={approve_loan_button_disabled}
+                            onClick={(e) => this.setState({
+                                selected_client: rowData
+                            }, () => this.handleOpenDialogue('approve_loan_dialogue_open'))}
+                >
+                    <Check/>
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Disburse loan">
+                <IconButton aria-label="edit" disabled={disburse_loan_button_disabled}
+                            onClick={(e) => this.setState({
+                                selected_client: rowData
+                            }, () => this.handleOpenDialogue('disburse_loan_dialogue_open'))}
+                >
+                    <AccountBalance/>
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Add payment">
+                <IconButton aria-label="edit">
+                    <Payment/>
+                </IconButton>
+            </Tooltip>
+        </Box>
+    };
+
     render() {
         const {
             clients_data,
@@ -130,7 +191,8 @@ class Home extends Component {
             currencies_data,
             approved_loans_data,
             active_loans_data,
-            current_month_income_data
+            current_month_income_data,
+            pending_disbursement_data
         } = this.props;
         let clients = clients_data['items'];
         let pending_loans = pending_loans_data['items'];
@@ -139,6 +201,7 @@ class Home extends Component {
         let currencies = currencies_data['items'];
         let approved_loans = approved_loans_data['items'];
         let active_loans = active_loans_data['items'];
+        let pending_disbursement = pending_disbursement_data['items'];
         let current_month_income = current_month_income_data['items'];
         clients.sort(dynamicSort('-approved_loans'));
         clients.sort(dynamicSort('-pending_disburse_loans'));
@@ -158,35 +221,11 @@ class Home extends Component {
         }, {
             field: 'mobile_no',
             title: 'Phone number',
+        }, {
+            field: 'Actions',
+            title: '',
+            render: rowData => this.renderActionButtons(rowData)
         }];
-
-        let actions = [
-            {
-                icon: 'edit',
-                tooltip: 'Edit Client',
-                onClick: (event, rowData) => {
-                    // Do save operation
-                }
-            }, {
-                icon: 'add',
-                tooltip: 'Issue Loan',
-                onClick: (event, rowData) => this.setState({
-                    selected_client: rowData
-                }, () => this.handleOpenDialogue('issue_loan_dialogue_open'))
-            }, {
-                icon: 'done',
-                tooltip: 'Approve Loan',
-                onClick: (event, rowData) => this.setState({
-                    selected_client: rowData
-                }, () => this.handleOpenDialogue('approve_loan_dialogue_open'))
-            }, {
-                icon: 'payment',
-                tooltip: 'Add payment',
-                onClick: (event, rowData) => {
-                    // Do save operation
-                }
-            }
-        ];
 
         return (
             <Container maxWidth="xl" className="Main-container">
@@ -203,8 +242,8 @@ class Home extends Component {
                         title="Clients"
                         columns={clients_columns}
                         data={clients}
-                        options={{actionsColumnIndex: -1}}
-                        actions={actions}
+                        // options={{actionsColumnIndex: -1}}
+                        // actions={actions}
                     />
                 </Box>
                 <FormModal
@@ -242,6 +281,24 @@ class Home extends Component {
                         approved_loans={approved_loans}
                         selected_client={this.state.selected_client}
                         handleClose={(e) => this.handleCloseDialogue('approve_loan_dialogue_open')}
+                    />
+                </FormModal>
+                <FormModal
+                    handleClickOpen={(e) => this.handleOpenDialogue('disburse_loan_dialogue_open')}
+                    handleClose={(e) => this.handleCloseDialogue('disburse_loan_dialogue_open')}
+                    open={this.state.disburse_loan_dialogue_open}
+                    title="Disburse loan"
+                >
+                    <FormApproveDisburseLoan
+                        pending_disbursement={pending_disbursement}
+                        pending_loans={[]}
+                        banks={banks}
+                        payments_mode={payments_mode}
+                        currencies={currencies}
+                        approved_loans={approved_loans}
+                        selected_client={this.state.selected_client}
+                        disburse_loan={true}
+                        handleClose={(e) => this.handleCloseDialogue('disburse_loan_dialogue_open')}
                     />
                 </FormModal>
             </Container>

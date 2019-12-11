@@ -14,6 +14,7 @@ import {Grid, Typography, TextField, Select, MenuItem, InputLabel, InputAdornmen
 import DatePicker from "../components/DatePicker";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
+import {fetchDataIfNeeded, invalidateData} from "../actions/actions";
 
 class FormIssueLoan extends Component {
     constructor(props) {
@@ -180,6 +181,10 @@ class FormIssueLoan extends Component {
                         activity: false
                     });
                     $("form#issue-loan-form")[0].reset();
+                    const {sessionVariables, dispatch} = this.props;
+                    let pending_loans_url = sessionVariables['pending_loans_url'] || '';
+                    dispatch(invalidateData(pending_loans_url));
+                    dispatch(fetchDataIfNeeded(pending_loans_url));
                 },
                 (results) => {
                     let alert_message = extractResponseError(results);
@@ -243,8 +248,9 @@ class FormIssueLoan extends Component {
                                                InputProps={{
                                                    endAdornment: (
                                                        <InputAdornment position='end'>
-                                                           <InputLabel id="interest-charged-per-label">Per</InputLabel>
-                                                           <Select name="interest_charged_per" labelId="interest-charged-per-label">
+                                                           <Select name="interest_charged_per"
+                                                                   defaultValue="month"
+                                                           >
                                                                <MenuItem value="month">Per month</MenuItem>
                                                                <MenuItem value="year">Per year</MenuItem>
                                                            </Select>
@@ -290,9 +296,8 @@ class FormIssueLoan extends Component {
                                                InputProps={{
                                                    endAdornment: (
                                                        <InputAdornment position='end'>
-                                                           <InputLabel id="repayment-interval-label">Interval</InputLabel>
                                                            <Select name="repayment_interval"
-                                                                   labelId="repayment-interval-label">
+                                                                   defaultValue="months">
                                                                <MenuItem value="days">Days</MenuItem>
                                                                <MenuItem value="months">Months</MenuItem>
                                                            </Select>
