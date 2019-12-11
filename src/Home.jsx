@@ -26,7 +26,8 @@ class Home extends Component {
             add_client_dialogue_open: false,
             issue_loan_dialogue_open: false,
             approve_loan_dialogue_open: false,
-            disburse_loan_dialogue_open: false
+            disburse_loan_dialogue_open: false,
+            add_payment_dialogue_open: false
         }
     }
 
@@ -123,22 +124,60 @@ class Home extends Component {
     }
 
     renderActionButtons = (rowData) => {
-        const {pending_loans_data, pending_disbursement_data} = this.props;
+        const {pending_loans_data, pending_disbursement_data, active_loans_data} = this.props;
         let pending_loans = pending_loans_data['items'];
         let pending_disbursement = pending_disbursement_data['items'];
+        let active_loans = active_loans_data['items'];
         let member_pending_loan = pending_loans.find(function (loan) {
             return loan.member === rowData['id'];
         });
         let member_pending_disbursement = pending_disbursement.find(function (loan) {
             return loan.member === rowData['id'];
         });
-        let approve_loan_button_disabled = true;
-        let disburse_loan_button_disabled = true;
+        let member_active_loans = active_loans.find(function (loan) {
+            return loan.member === rowData['id'];
+        });
+        let approve_loan_button = <IconButton aria-label="edit" disabled>
+            <Check/>
+        </IconButton>;
+        let disburse_loan_button = <IconButton aria-label="edit" disabled>
+            <AccountBalance/>
+        </IconButton>;
+        let add_payment_button = <IconButton aria-label="edit" disabled>
+            <Payment/>
+        </IconButton>;
         if (member_pending_loan) {
-            approve_loan_button_disabled = false;
+            approve_loan_button = <Tooltip title="Approve loan">
+                <IconButton aria-label="edit"
+                            onClick={(e) => this.setState({
+                                selected_client: rowData
+                            }, () => this.handleOpenDialogue('approve_loan_dialogue_open'))}
+                >
+                    <Check/>
+                </IconButton>
+            </Tooltip>;
+        }
+        if (member_active_loans) {
+            add_payment_button = <Tooltip title="Add payment">
+                <IconButton aria-label="edit"
+                            onClick={(e) => this.setState({
+                                selected_client: rowData
+                            }, () => this.handleOpenDialogue('add_payment_dialogue_open'))}
+                >
+                    <Payment/>
+                </IconButton>
+            </Tooltip>;
         }
         if (member_pending_disbursement) {
-            disburse_loan_button_disabled = false;
+            disburse_loan_button = <Tooltip title="Disburse loan">
+                <IconButton aria-label="edit"
+                            onClick={(e) => this.setState({
+                                selected_client: rowData
+                            }, () => this.handleOpenDialogue('disburse_loan_dialogue_open'))}
+                >
+                    <AccountBalance/>
+                </IconButton>
+            </Tooltip>;
         }
 
         return <Box display="flex" justifyContent="flex-end">
@@ -156,29 +195,9 @@ class Home extends Component {
                     <Add/>
                 </IconButton>
             </Tooltip>
-            <Tooltip title="Approve loan">
-                <IconButton aria-label="edit" disabled={approve_loan_button_disabled}
-                            onClick={(e) => this.setState({
-                                selected_client: rowData
-                            }, () => this.handleOpenDialogue('approve_loan_dialogue_open'))}
-                >
-                    <Check/>
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Disburse loan">
-                <IconButton aria-label="edit" disabled={disburse_loan_button_disabled}
-                            onClick={(e) => this.setState({
-                                selected_client: rowData
-                            }, () => this.handleOpenDialogue('disburse_loan_dialogue_open'))}
-                >
-                    <AccountBalance/>
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Add payment">
-                <IconButton aria-label="edit">
-                    <Payment/>
-                </IconButton>
-            </Tooltip>
+            {approve_loan_button}
+            {disburse_loan_button}
+            {add_payment_button}
         </Box>
     };
 
@@ -299,6 +318,24 @@ class Home extends Component {
                         selected_client={this.state.selected_client}
                         disburse_loan={true}
                         handleClose={(e) => this.handleCloseDialogue('disburse_loan_dialogue_open')}
+                    />
+                </FormModal>
+                <FormModal
+                    handleClickOpen={(e) => this.handleOpenDialogue('add_payment_dialogue_open')}
+                    handleClose={(e) => this.handleCloseDialogue('add_payment_dialogue_open')}
+                    open={this.state.add_payment_dialogue_open}
+                    title="Add payment"
+                >
+                    <FormApproveDisburseLoan
+                        pending_disbursement={pending_disbursement}
+                        pending_loans={[]}
+                        banks={banks}
+                        payments_mode={payments_mode}
+                        currencies={currencies}
+                        approved_loans={approved_loans}
+                        selected_client={this.state.selected_client}
+                        disburse_loan={true}
+                        handleClose={(e) => this.handleCloseDialogue('add_payment_dialogue_open')}
                     />
                 </FormModal>
             </Container>
