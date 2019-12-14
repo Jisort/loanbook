@@ -14,12 +14,13 @@ import FormFeedbackMessage from "../components/FormFeedbackMessage";
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom';
-import {TextField, Grid, FormControl, Select, MenuItem, InputLabel} from "@material-ui/core";
+import {
+    TextField, Grid, FormControl, Select,
+    MenuItem, InputLabel, DialogActions,
+    DialogContent, Button
+} from "@material-ui/core";
 import DatePicker from "../components/DatePicker";
 import AutocompleteSelect from "../components/AutocompleteSelect";
-import DialogContent from "@material-ui/core/DialogContent";
-import Button from "@material-ui/core/Button";
-import DialogActions from "@material-ui/core/DialogActions";
 
 class ClientDetailsForm extends Component {
 

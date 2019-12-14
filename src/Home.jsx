@@ -17,6 +17,7 @@ import FormAddClient from "./client/FormAddClient";
 import FormIssueLoan from "./loan/FormIssueLoan";
 import FormApproveDisburseLoan from "./loan/FormApproveDisburseLoan";
 import {Edit, Add, Check, Payment, AccountBalance} from '@material-ui/icons';
+import FormAddPayment from "./payment/FormAddPayment";
 
 class Home extends Component {
     constructor(props) {
@@ -326,15 +327,12 @@ class Home extends Component {
                     open={this.state.add_payment_dialogue_open}
                     title="Add payment"
                 >
-                    <FormApproveDisburseLoan
-                        pending_disbursement={pending_disbursement}
-                        pending_loans={[]}
+                    <FormAddPayment
                         banks={banks}
                         payments_mode={payments_mode}
                         currencies={currencies}
-                        approved_loans={approved_loans}
+                        active_loans={active_loans}
                         selected_client={this.state.selected_client}
-                        disburse_loan={true}
                         handleClose={(e) => this.handleCloseDialogue('add_payment_dialogue_open')}
                     />
                 </FormModal>
