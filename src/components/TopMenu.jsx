@@ -106,12 +106,14 @@ export default function MiniDrawer(props) {
             label: 'Home',
             icon: <HomeIcon/>,
             tooltipTitle: 'home',
-            route: '/'
+            route: '/',
+            onClick: props['handleLinkClick']
         } ,{
             label: 'Loans',
             icon: <ViewListIcon/>,
             tooltipTitle: 'view loans',
-            route: '/viewLoans'
+            route: '/viewLoans',
+            onClick: props['handleLinkClick']
         }
     ];
 
@@ -120,19 +122,22 @@ export default function MiniDrawer(props) {
             label: 'Profile',
             icon: <AccountCircleIcon/>,
             tooltipTitle: 'my profile',
-            route: '/'
+            route: '/',
+            onClick: props['handleLinkClick']
         },
         {
             label: 'Logout',
             icon: <ExitToAppIcon/>,
             tooltipTitle: 'exit app',
-            route: '/'
+            route: '/',
+            onClick: props['handleLogout']
         },
         {
             label: 'Settings',
             icon: <SettingsIcon/>,
             tooltipTitle: 'view settings',
-            route: '/'
+            route: '/',
+            onClick: props['handleLinkClick']
         }
     ];
 
@@ -185,7 +190,7 @@ export default function MiniDrawer(props) {
                 <Divider/>
                 <List>
                     {upper_menu_items.map((item, index) => (
-                        <ListItem button key={index} onClick={(e) => props['handleLinkClick'](e, item['route'])}>
+                        <ListItem button key={index} onClick={(e) => item['onClick'](e, item['route'])}>
                             <Tooltip title={item['tooltipTitle']}>
                                 <ListItemIcon>{item['icon']}</ListItemIcon>
                             </Tooltip>
@@ -196,7 +201,7 @@ export default function MiniDrawer(props) {
                 <Divider/>
                 <List>
                     {lower_menu_items.map((item, index) => (
-                        <ListItem button key={index} onClick={(e) => props['handleLinkClick'](e, item['route'])}>
+                        <ListItem button key={index} onClick={(e) => item['onClick'](e, item['route'])}>
                             <Tooltip title={item['tooltipTitle']}>
                                 <ListItemIcon>{item['icon']}</ListItemIcon>
                             </Tooltip>
