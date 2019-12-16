@@ -9,7 +9,6 @@ import {
 } from './actions/actions';
 import {getUrlData, dynamicSort} from "./functions/componentActions";
 import FormModal from "./components/FormModal";
-// import ApproveLoanForm from "./ApproveLoanForm";
 import moment from "moment";
 import {Container, Button, Fab, Box, Tooltip, IconButton} from "@material-ui/core";
 import MaterialTable from 'material-table';
@@ -248,7 +247,7 @@ class Home extends Component {
         }];
 
         return (
-            <Container maxWidth="xl" className="Main-container">
+            <div>
                 <Box pt={2}>
                     <Fab variant="extended" color="default"
                          onClick={(e) => this.handleOpenDialogue('add_client_dialogue_open')}>
@@ -262,8 +261,6 @@ class Home extends Component {
                         title="Clients"
                         columns={clients_columns}
                         data={clients}
-                        // options={{actionsColumnIndex: -1}}
-                        // actions={actions}
                     />
                 </Box>
                 <FormModal
@@ -336,7 +333,7 @@ class Home extends Component {
                         handleClose={(e) => this.handleCloseDialogue('add_payment_dialogue_open')}
                     />
                 </FormModal>
-            </Container>
+            </div>
         )
     }
 }

@@ -6,9 +6,8 @@ import {serverBaseUrl} from "./functions/baseUrls";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import LoadingIndicator from "./components/LoadingIndicator";
-import {AppBar, Toolbar, IconButton, Typography, Button, Badge} from '@material-ui/core';
-import {Menu as MenuIcon, AccountCircle} from '@material-ui/icons';
 import TopMenu from "./components/TopMenu";
+import {makeStyles} from "@material-ui/core";
 
 class Menu extends Component {
     constructor(props) {
@@ -59,14 +58,36 @@ class Menu extends Component {
         )
     };
 
+    handleLinkClick = (e, route) => {
+        e.preventDefault();
+        pushHistory(this.props, route)
+    };
+
     render() {
+        const useStyles = makeStyles(theme => ({
+            toolbar: {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                padding: theme.spacing(0, 1),
+                ...theme.mixins.toolbar,
+            },
+            content: {
+                flexGrow: 1,
+                padding: theme.spacing(3),
+            },
+        }));
+
         if (this.state.loading) {
             return <LoadingIndicator/>;
         }
         return (
             <div>
-                <TopMenu brand_name="Loanbook" notifications_count={0} handleLogout={this.handleLogout}/>
-                {this.props.children}
+                <TopMenu brand_name="Loanbook" notifications_count={0}
+                         handleLogout={this.handleLogout} handleLinkClick={this.handleLinkClick}
+                >
+                    {this.props.children}
+                </TopMenu>
             </div>
         )
     }

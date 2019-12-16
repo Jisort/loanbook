@@ -26,3 +26,15 @@
 .clickable {
     cursor: pointer;
 }
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 8px;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 24px;
+}
