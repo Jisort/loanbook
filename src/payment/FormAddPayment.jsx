@@ -11,6 +11,7 @@ import {serverBaseUrl} from "../functions/baseUrls";
 import {postAPIRequest} from "../functions/APIRequests";
 import {extractResponseError, formDataToPayload} from "../functions/componentActions";
 import moment from "moment";
+import {fetchDataIfNeeded, invalidateData} from "../actions/actions";
 
 
 class FormAddPayment extends Component {
@@ -55,13 +56,21 @@ class FormAddPayment extends Component {
         payload = formDataToPayload(formData, payload);
         let payment_url = serverBaseUrl() + '/mpa/client_payments/';
         postAPIRequest(payment_url,
-            (results) => {
+            () => {
                 this.setState({
                     message: true,
                     message_text: 'Payment added successfully',
                     message_variant: 'success',
                     activity: false
                 });
+                const {sessionVariables, dispatch} = this.props;
+                let loan_ledgers_url = sessionVariables['loan_ledgers_url'] || '';
+                let loan_schedule_url = sessionVariables['loan_schedule_url'] || '';
+                let active_loans_url = sessionVariables['active_loans_url'] || '';
+                dispatch(invalidateData(loan_ledgers_url));
+                dispatch(invalidateData(loan_schedule_url));
+                dispatch(invalidateData(active_loans_url));
+                dispatch(fetchDataIfNeeded(active_loans_url));
                 $("form#add-payment")[0].reset();
             },
             (results) => {

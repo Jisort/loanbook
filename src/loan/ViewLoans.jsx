@@ -11,18 +11,25 @@ import moment from "moment";
 import {Receipt, Payment, Delete} from "@material-ui/icons";
 import Modal from "../components/Modal";
 import LoanStatement from "./LoanStatement";
+import FormAddPayment from "../payment/FormAddPayment";
+import FormModal from "../components/FormModal";
 
 class ViewLoans extends Component {
     constructor(props) {
         super(props);
         this.state = {
             statement_dialogue_open: false,
-            selected_loan: {}
+            selected_loan: {},
+            add_payment_dialogue_open: false,
+            selected_client: {}
         }
     }
 
     componentDidMount() {
         this.fetchUrlData('active_loans_url', '/products/applied_loans/?status=1');
+        this.fetchUrlData('banks_url', '/registration/banks/');
+        this.fetchUrlData('payments_mode_url', '/registration/payment_modes/');
+        this.fetchUrlData('currencies_url', '/registration/currency/');
     }
 
     handleOpenDialogue = (dialogue) => {
@@ -45,6 +52,7 @@ class ViewLoans extends Component {
     };
 
     renderActionButtons = (rowData) => {
+        let selected_client = {id: rowData['member']};
         return <Box display="flex" justifyContent="flex-end">
             <Tooltip title="Loan statement">
                 <IconButton aria-label="statement"
@@ -57,7 +65,13 @@ class ViewLoans extends Component {
                 </IconButton>
             </Tooltip>
             <Tooltip title="Add payment">
-                <IconButton aria-label="payment">
+                <IconButton aria-label="payment"
+                            onClick={() => this.setState({
+                                selected_loan: rowData,
+                                selected_client: selected_client
+                            }, () => this.handleOpenDialogue('add_payment_dialogue_open'))
+                            }
+                >
                     <Payment/>
                 </IconButton>
             </Tooltip>
@@ -70,8 +84,16 @@ class ViewLoans extends Component {
     };
 
     render() {
-        const {active_loans_data} = this.props;
+        const {
+            active_loans_data,
+            banks_data,
+            payments_mode_data,
+            currencies_data,
+        } = this.props;
         let active_loans = active_loans_data['items'];
+        let banks = banks_data['items'];
+        let payments_mode = payments_mode_data['items'];
+        let currencies = currencies_data['items'];
         let loans_columns = [{
 
             field: 'member_name',
@@ -118,6 +140,21 @@ class ViewLoans extends Component {
                         selected_loan={this.state.selected_loan}
                     />
                 </Modal>
+                <FormModal
+                    handleClickOpen={() => this.handleOpenDialogue('add_payment_dialogue_open')}
+                    handleClose={() => this.handleCloseDialogue('add_payment_dialogue_open')}
+                    open={this.state.add_payment_dialogue_open}
+                    title="Add payment"
+                >
+                    <FormAddPayment
+                        banks={banks}
+                        payments_mode={payments_mode}
+                        currencies={currencies}
+                        active_loans={[this.state.selected_loan]}
+                        selected_client={this.state.selected_client}
+                        handleClose={() => this.handleCloseDialogue('add_payment_dialogue_open')}
+                    />
+                </FormModal>
             </div>
         )
     }
@@ -126,7 +163,10 @@ class ViewLoans extends Component {
 ViewLoans.propTypes = {
     sessionVariables: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
-    active_loans_data: PropTypes.object.isRequired
+    active_loans_data: PropTypes.object.isRequired,
+    banks_data: PropTypes.object.isRequired,
+    payments_mode_data: PropTypes.object.isRequired,
+    currencies_data: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -137,10 +177,16 @@ function mapStateToProps(state) {
 
     const {sessionVariables, dataByUrl} = state;
     const active_loans_data = retrieveUrlData('active_loans_url', dataByUrl);
+    const banks_data = retrieveUrlData('banks_url', dataByUrl);
+    const payments_mode_data = retrieveUrlData('payments_mode_url', dataByUrl);
+    const currencies_data = retrieveUrlData('currencies_url', dataByUrl);
 
     return {
         sessionVariables,
-        active_loans_data
+        active_loans_data,
+        banks_data,
+        payments_mode_data,
+        currencies_data
     }
 }
 
