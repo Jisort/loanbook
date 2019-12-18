@@ -11,6 +11,7 @@ import {fetchDataIfNeeded, setSessionVariable} from "../actions/actions";
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import ComponentLoadingIndicator from "../components/ComponentLoadingIndicator";
 
 class LoanStatement extends Component {
 
@@ -85,23 +86,29 @@ class LoanStatement extends Component {
         }
         statement_ledgers.sort(dynamicSort('date'));
         let balance = 0;
-        let statement_body = statement_ledgers.map((ledger, key) => {
-            if (ledger['debit']) {
-                balance += ledger['debit'];
-            }
-            if (ledger['credit']) {
-                balance -= ledger['credit'];
-            }
-            return <TableRow key={key}>
-                <TableCell component="th" scope="row">
-                    {moment(ledger['date']).format('DD-MMM-YYYY')}
-                </TableCell>
-                <TableCell align="right">{ledger['transaction_name']}</TableCell>
-                <TableCell align="right">{numberWithCommas(ledger['amount'])}</TableCell>
-                <TableCell align="right">{numberWithCommas(ledger['charge'])}</TableCell>
-                <TableCell align="right">{numberWithCommas(balance)}</TableCell>
+
+        let statement_body = <TableRow>
+                <TableCell colSpan={5}><ComponentLoadingIndicator/></TableCell>
             </TableRow>;
-        });
+        if (!loan_ledgers_data['isFetching'] && !loan_schedule_data['isFetching']) {
+            statement_body = statement_ledgers.map((ledger, key) => {
+                if (ledger['debit']) {
+                    balance += ledger['debit'];
+                }
+                if (ledger['credit']) {
+                    balance -= ledger['credit'];
+                }
+                return <TableRow key={key}>
+                    <TableCell component="th" scope="row">
+                        {moment(ledger['date']).format('DD-MMM-YYYY')}
+                    </TableCell>
+                    <TableCell align="right">{ledger['transaction_name']}</TableCell>
+                    <TableCell align="right">{numberWithCommas(ledger['amount'])}</TableCell>
+                    <TableCell align="right">{numberWithCommas(ledger['charge'])}</TableCell>
+                    <TableCell align="right">{numberWithCommas(balance)}</TableCell>
+                </TableRow>;
+            });
+        }
 
         return (
             <Paper>

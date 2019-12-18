@@ -5,7 +5,7 @@ import {postAPIRequest, getAPIRequest} from "./functions/APIRequests";
 import {serverBaseUrl} from "./functions/baseUrls";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
-import LoadingIndicator from "./components/LoadingIndicator";
+import AppLoadingIndicator from "./components/AppLoadingIndicator";
 import TopMenu from "./components/TopMenu";
 
 class Menu extends Component {
@@ -64,7 +64,7 @@ class Menu extends Component {
 
     render() {
         if (this.state.loading) {
-            return <LoadingIndicator/>;
+            return <AppLoadingIndicator/>;
         }
         return (
             <div>
