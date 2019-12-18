@@ -72,6 +72,9 @@ class ApproveLoanForm extends Component {
                 let pending_disbursement_url = sessionVariables['pending_disbursement_url'] || '';
                 dispatch(invalidateData(pending_disbursement_url));
                 dispatch(fetchDataIfNeeded(pending_disbursement_url));
+                let active_loans_url = sessionVariables['active_loans_url'] || '';
+                dispatch(invalidateData(active_loans_url));
+                dispatch(fetchDataIfNeeded(active_loans_url));
             },
             (results) => {
                 let alert_message = extractResponseError(results);
