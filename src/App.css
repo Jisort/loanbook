@@ -42,3 +42,11 @@
 .bold {
     font-weight: bold;
 }
+
+.Loading-indicator {
+    height: 100vh;
+}
+
+.Box-loading-indicator {
+    height: 100%;
+}
