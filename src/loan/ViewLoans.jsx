@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Box, Container, IconButton, Tooltip} from "@material-ui/core";
+import {Box, IconButton, Tooltip} from "@material-ui/core";
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
@@ -9,12 +9,33 @@ import {serverBaseUrl} from "../functions/baseUrls";
 import {fetchDataIfNeeded, setSessionVariable} from "../actions/actions";
 import moment from "moment";
 import {Receipt, Payment, Delete} from "@material-ui/icons";
+import Modal from "../components/Modal";
+import LoanStatement from "./LoanStatement";
 
 class ViewLoans extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            statement_dialogue_open: false,
+            selected_loan: {}
+        }
+    }
 
     componentDidMount() {
         this.fetchUrlData('active_loans_url', '/products/applied_loans/?status=1');
     }
+
+    handleOpenDialogue = (dialogue) => {
+        this.setState({
+            [dialogue]: true
+        })
+    };
+
+    handleCloseDialogue = (dialogue) => {
+        this.setState({
+            [dialogue]: false
+        })
+    };
 
     fetchUrlData = (var_name, url) => {
         const {dispatch} = this.props;
@@ -26,7 +47,12 @@ class ViewLoans extends Component {
     renderActionButtons = (rowData) => {
         return <Box display="flex" justifyContent="flex-end">
             <Tooltip title="Loan statement">
-                <IconButton aria-label="statement">
+                <IconButton aria-label="statement"
+                            onClick={() => this.setState({
+                                selected_loan: rowData
+                            }, () => this.handleOpenDialogue('statement_dialogue_open'))
+                            }
+                >
                     <Receipt/>
                 </IconButton>
             </Tooltip>
@@ -82,6 +108,16 @@ class ViewLoans extends Component {
                         data={active_loans}
                     />
                 </Box>
+                <Modal
+                    open={this.state.statement_dialogue_open}
+                    handleOpen={() => this.handleOpenDialogue('statement_dialogue_open')}
+                    handleClose={() => this.handleCloseDialogue('statement_dialogue_open')}
+                    dialogue_title="Loan statement"
+                >
+                    <LoanStatement
+                        selected_loan={this.state.selected_loan}
+                    />
+                </Modal>
             </div>
         )
     }

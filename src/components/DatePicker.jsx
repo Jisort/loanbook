@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import MomentUtils from '@date-io/moment';
 import {
     DatePicker,

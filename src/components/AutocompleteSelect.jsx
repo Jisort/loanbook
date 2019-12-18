@@ -4,14 +4,6 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
 
-// ISO 3166-1 alpha-2
-// ⚠️ No support for IE 11
-function countryToFlag(isoCode) {
-    return typeof String.fromCodePoint !== 'undefined'
-        ? isoCode.toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397))
-        : isoCode;
-}
-
 const useStyles = makeStyles({
     option: {
         fontSize: 15,

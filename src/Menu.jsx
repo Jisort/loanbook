@@ -7,7 +7,6 @@ import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import LoadingIndicator from "./components/LoadingIndicator";
 import TopMenu from "./components/TopMenu";
-import {makeStyles} from "@material-ui/core";
 
 class Menu extends Component {
     constructor(props) {
@@ -64,20 +63,6 @@ class Menu extends Component {
     };
 
     render() {
-        const useStyles = makeStyles(theme => ({
-            toolbar: {
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                padding: theme.spacing(0, 1),
-                ...theme.mixins.toolbar,
-            },
-            content: {
-                flexGrow: 1,
-                padding: theme.spacing(3),
-            },
-        }));
-
         if (this.state.loading) {
             return <LoadingIndicator/>;
         }
