@@ -1,6 +1,5 @@
 .Login-container {
-    background: url("media/background.jpg") no-repeat;
-    background-size: cover;
+    background: url("media/background.png") no-repeat;
 }
 
 .login-grid {
