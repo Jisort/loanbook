@@ -13,6 +13,7 @@ import Modal from "../components/Modal";
 import LoanStatement from "./LoanStatement";
 import FormAddPayment from "../payment/FormAddPayment";
 import FormModal from "../components/FormModal";
+import FormReverseLoan from "./FormReverseLoan";
 
 class ViewLoans extends Component {
     constructor(props) {
@@ -21,7 +22,8 @@ class ViewLoans extends Component {
             statement_dialogue_open: false,
             selected_loan: {},
             add_payment_dialogue_open: false,
-            selected_client: {}
+            selected_client: {},
+            reverse_loan_dialogue_open: false
         }
     }
 
@@ -76,7 +78,12 @@ class ViewLoans extends Component {
                 </IconButton>
             </Tooltip>
             <Tooltip title="Reverse loan">
-                <IconButton aria-label="reverse">
+                <IconButton aria-label="reverse"
+                            onClick={() => this.setState({
+                                selected_loan: rowData,
+                            }, () => this.handleOpenDialogue('reverse_loan_dialogue_open'))
+                            }
+                >
                     <Delete/>
                 </IconButton>
             </Tooltip>
@@ -153,6 +160,17 @@ class ViewLoans extends Component {
                         active_loans={[this.state.selected_loan]}
                         selected_client={this.state.selected_client}
                         handleClose={() => this.handleCloseDialogue('add_payment_dialogue_open')}
+                    />
+                </FormModal>
+                <FormModal
+                    handleClickOpen={() => this.handleOpenDialogue('add_payment_dialogue_open')}
+                    handleClose={() => this.handleCloseDialogue('add_payment_dialogue_open')}
+                    open={this.state.reverse_loan_dialogue_open}
+                    title="Reverse loan"
+                >
+                    <FormReverseLoan
+                        selected_loan={this.state.selected_loan}
+                        handleClose={() => this.handleCloseDialogue('reverse_loan_dialogue_open')}
                     />
                 </FormModal>
             </div>
