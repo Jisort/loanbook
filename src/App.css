@@ -49,3 +49,8 @@
 .Box-loading-indicator {
     height: 100%;
 }
+
+.Facebook-login-button {
+    background-color: #4267B2;
+    color: #ffffff;
+}
