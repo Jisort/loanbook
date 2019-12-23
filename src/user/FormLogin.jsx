@@ -1,12 +1,14 @@
 import React, {Component} from "react";
-import {Container, TextField, Card, CardContent, FormControl, Button, Grid, Paper} from "@material-ui/core";
+import {Container, Card, CardContent, Button, Grid, Paper, Box, FormControl, TextField} from "@material-ui/core";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import {withRouter} from "react-router-dom";
-import {postAPIRequest} from "../functions/APIRequests";
+import {postAPIRequest, getAPIRequest} from "../functions/APIRequests";
 import {serverBaseUrl} from "../functions/baseUrls";
 import {pushHistory, extractResponseError, formDataToPayload} from "../functions/componentActions";
 import $ from "jquery";
 import FormFeedbackMessage from "../components/FormFeedbackMessage";
+import SocialLoginButton from "../components/SocialLoginButton";
+import {mdiGoogle, mdiFacebook} from '@mdi/js';
 
 class FormLogin extends Component {
     constructor(props) {
@@ -15,7 +17,19 @@ class FormLogin extends Component {
             activity: false,
             message: false,
             message_text: null,
-            message_variant: 'info'
+            message_variant: 'info',
+            password_field: false,
+            old_login: false
+        }
+    }
+
+    componentDidMount() {
+        const search = this.props.location.search;
+        const params = new URLSearchParams(search);
+        if (params.get('old_login')) {
+            this.setState({
+                old_login: true
+            });
         }
     }
 
@@ -30,8 +44,11 @@ class FormLogin extends Component {
             client_id: 'i7YlkIu4qdkLZJsnJubhIbeYWP0Qq2NH3D0vatNO',
             client_secret: 'cx84im8OqngRMM3EftMAfKh1vwEFuSuAD9GH2gE7JxzjE7lJCTI55ZJND8MFPOGkHcFesA9Piy9CgKSzaz3L0bKyspdhq1w8wRouYwhrv3ba8rNwvZ4ppnsebR0rccdB'
         };
-        payload = formDataToPayload(formData, payload);
+        if (!this.state.old_login) {
+            payload['username'] = localStorage.email;
+        }
         localStorage.username = payload.username;
+        payload = formDataToPayload(formData, payload);
         let login_url = serverBaseUrl() + '/registration/login/';
         postAPIRequest(
             login_url,
@@ -59,6 +76,40 @@ class FormLogin extends Component {
         );
     };
 
+    handleSocialLogin = (user) => {
+        let email = '';
+        if (user['_provider'] === 'facebook') {
+            let profile = user['_profile'];
+            email = profile['email'];
+        }
+        let check_login_url = serverBaseUrl() + `/registration/social_login/?email=${email}&check=${true}`;
+        getAPIRequest(
+            check_login_url,
+            () => {
+                localStorage.email = email;
+                this.setState({
+                    password_field: true
+                });
+            },
+            (results) => {
+                let alert_message = extractResponseError(results);
+                this.setState({
+                    message: true,
+                    message_text: alert_message,
+                    message_variant: 'error',
+                    activity: false
+                });
+            },
+            {
+                'Content-Type': 'application/json'
+            }
+        );
+    };
+
+    handleSocialLoginFailure = (err) => {
+        console.error(err)
+    };
+
     render() {
         let login_button = <Button variant="contained" color="primary" type="submit">
             Login
@@ -73,6 +124,96 @@ class FormLogin extends Component {
                 message_text={this.state.message_text}
             />;
         }
+        const facebook_login_button_styles = {
+            backgroundColor: '#4267B2',
+            color: '#ffffff'
+        };
+        const google_login_button_styles = {
+            backgroundColor: '#4285F4',
+            color: '#ffffff'
+        };
+        let social_form = <Grid container spacing={3}>
+            <Grid item xs={12}>
+                <Box display="flex" justifyContent="center">
+                    <SocialLoginButton
+                        provider='facebook'
+                        appId='817524248668013'
+                        onLoginSuccess={this.handleSocialLogin}
+                        onLoginFailure={this.handleSocialLoginFailure}
+                        styles={google_login_button_styles}
+                        icon={mdiGoogle}
+                        color="#ffffff"
+                    >
+                        Login with Google
+                    </SocialLoginButton>
+                </Box>
+            </Grid>
+            <Grid item xs={12}>
+                <Box display="flex" justifyContent="center">
+                    <SocialLoginButton
+                        provider='facebook'
+                        appId='817524248668013'
+                        onLoginSuccess={this.handleSocialLogin}
+                        onLoginFailure={this.handleSocialLoginFailure}
+                        styles={facebook_login_button_styles}
+                        icon={mdiFacebook}
+                        color="#ffffff"
+                    >
+                        Login with Facebook
+                    </SocialLoginButton>
+                </Box>
+            </Grid>
+        </Grid>;
+        if (this.state.password_field) {
+            social_form = <form
+                noValidate
+                autoComplete="off"
+                onSubmit={(e) => this.handleLoginSubmit(e)}
+                id="login-form"
+            >
+                <div>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <TextField type="password" label="Password" name="password"/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                {login_button}
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </div>
+            </form>;
+        } else if (this.state.old_login) {
+            social_form = <form
+                noValidate
+                autoComplete="off"
+                onSubmit={(e) => this.handleLoginSubmit(e)}
+                id="login-form"
+            >
+                <div>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <TextField label="Email/Username" name="username"/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <TextField type="password" label="Password" name="password"/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                {login_button}
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </div>
+            </form>;
+        }
         return (
             <Paper className="Login-container">
                 <Container maxWidth="sm">
@@ -86,32 +227,7 @@ class FormLogin extends Component {
                         <Card>
                             <CardContent>
                                 {message}
-                                <form
-                                    noValidate
-                                    autoComplete="off"
-                                    onSubmit={(e) => this.handleLoginSubmit(e)}
-                                    id="login-form"
-                                >
-                                    <div>
-                                        <Grid container spacing={3}>
-                                            <Grid item xs={12}>
-                                                <FormControl fullWidth>
-                                                    <TextField label="Email/Username" name="username"/>
-                                                </FormControl>
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <FormControl fullWidth>
-                                                    <TextField type="password" label="Password" name="password"/>
-                                                </FormControl>
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <FormControl fullWidth>
-                                                    {login_button}
-                                                </FormControl>
-                                            </Grid>
-                                        </Grid>
-                                    </div>
-                                </form>
+                                {social_form}
                             </CardContent>
                         </Card>
                     </Grid>
