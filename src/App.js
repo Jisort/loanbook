@@ -1,9 +1,9 @@
 import React from 'react';
-import FormLogin from "./user/FormLogin";
 import Menu from "./Menu";
 import Home from "./Home";
 import ViewLoans from "./loan/ViewLoans";
-import FormSocialLogin from "./user/FormSocialLogin";
+import FormLogin from "./user/FormLogin";
+import FormSignUp from "./user/FormSignUp";
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import './App.css';
 
@@ -11,8 +11,8 @@ function App() {
     return (
         <Router>
             <Switch>
-                <Route exact path="/oldLogin" component={FormLogin} key={2}/>
-                <Route exact path="/login" component={FormSocialLogin} key={2}/>
+                <Route exact path="/signUp" component={FormSignUp} key={1}/>
+                <Route exact path="/login" component={FormLogin} key={2}/>
                 <Menu key={3}>
                     <Switch>
                         <Route exact path="/" component={Home} key={3.1}/>
