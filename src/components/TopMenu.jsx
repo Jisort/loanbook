@@ -135,7 +135,7 @@ export default function MiniDrawer(props) {
             label: 'Settings',
             icon: <SettingsIcon/>,
             tooltipTitle: 'view settings',
-            route: '/',
+            route: '/settings',
             onClick: props['handleLinkClick']
         }
     ];
