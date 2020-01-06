@@ -19,13 +19,13 @@ export default function CountrySelect(props) {
 
     return (
         <Autocomplete
-            id="autocomplete-select"
             options={props['data']}
             classes={{
                 option: classes.option,
             }}
             autoHighlight
             onChange={(e, option) => props['onChange'](option || {})}
+            defaultValue={props['defaultValue']}
             getOptionLabel={option => option.label}
             renderOption={option => (
                 <React.Fragment>
