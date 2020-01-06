@@ -50,7 +50,7 @@ class Settings extends Component {
         });
     };
 
-    handleUpdateOrganization = (name, mobile_no, country) => {
+    handleUpdateOrganization = (name, mobile_no, country, callback) => {
         const {
             organization_data
         } = this.props;
@@ -67,16 +67,7 @@ class Settings extends Component {
         postAPIRequest(
             organization_url,
             () => {
-                const {sessionVariables, dispatch} = this.props;
-                let organization_url = sessionVariables['organization_url'] || '';
-                dispatch(invalidateData(organization_url));
-                dispatch(fetchDataIfNeeded(organization_url));
-                this.setState({
-                    message: true,
-                    message_text: 'Successfully updated settings',
-                    message_variant: 'success',
-                    activity: false
-                });
+                callback();
             },
             (results) => {
                 let alert_message = extractResponseError(results);
@@ -96,6 +87,101 @@ class Settings extends Component {
         );
     };
 
+    handleCreateUpdateCurrency = () => {
+        let selected_currency = Data.find((currency) => {
+           return currency['code'] === this.state.selected_currency
+        });
+        const {
+            currencies_data
+        } = this.props;
+        let currencies = currencies_data['items'];
+        let request_method = 'POST';
+        let currencies_url = serverBaseUrl() + '/registration/currency/';
+        if (currencies.length > 0) {
+            request_method = 'PUT';
+            currencies_url = serverBaseUrl() + `/registration/currency/${currencies[0]['id']}/`;
+        }
+        let payload = {
+            name: selected_currency['currency'],
+            code: selected_currency['code'],
+        };
+        postAPIRequest(
+            currencies_url,
+            () => {
+                this.setState({
+                    message: true,
+                    message_text: 'Successfully updated settings',
+                    message_variant: 'success',
+                    activity: false
+                });
+                const {sessionVariables, dispatch} = this.props;
+                let organization_url = sessionVariables['organization_url'] || '';
+                let payments_mode_url = sessionVariables['payments_mode_url'] || '';
+                let currencies_url = sessionVariables['currencies_url'] || '';
+                dispatch(invalidateData(organization_url));
+                dispatch(invalidateData(payments_mode_url));
+                dispatch(invalidateData(currencies_url));
+                dispatch(fetchDataIfNeeded(organization_url));
+                dispatch(fetchDataIfNeeded(payments_mode_url));
+                dispatch(fetchDataIfNeeded(currencies_url));
+            },
+            (results) => {
+                let alert_message = extractResponseError(results);
+                this.setState({
+                    message: true,
+                    message_text: alert_message,
+                    message_variant: 'error',
+                    activity: false
+                });
+            },
+            payload,
+            {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.token
+            },
+            request_method
+        )
+    };
+
+    handleCreateUpdatePaymentMode = (name, callback) => {
+        const {
+            payments_mode_data
+        } = this.props;
+        let payments_mode = payments_mode_data['items'];
+        let request_method = 'POST';
+        let payment_mode_url = serverBaseUrl() + '/registration/payment_modes/';
+        if (payments_mode.length > 0) {
+            request_method = 'PUT';
+            payment_mode_url = serverBaseUrl() + `/registration/payment_modes/${payments_mode[0]['id']}/`;
+        }
+        let payload = {
+            name: name,
+            description: name,
+            is_cash_payment: '2'
+        };
+        postAPIRequest(
+            payment_mode_url,
+            () => {
+                callback();
+            },
+            (results) => {
+                let alert_message = extractResponseError(results);
+                this.setState({
+                    message: true,
+                    message_text: alert_message,
+                    message_variant: 'error',
+                    activity: false
+                });
+            },
+            payload,
+            {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.token
+            },
+            request_method
+        )
+    };
+
     handleUpdateSettings(e) {
         e.preventDefault();
         this.setState({
@@ -107,7 +193,14 @@ class Settings extends Component {
         };
         let formData = new FormData($('form#settings-form')[0]);
         payload = formDataToPayload(formData, payload);
-        this.handleUpdateOrganization(payload['organization_name'], payload['mobile_no'], payload['country']);
+        this.handleUpdateOrganization(
+            payload['organization_name'],
+            payload['mobile_no'],
+            payload['country'],
+            () => this.handleCreateUpdatePaymentMode(payload['payment_mode'],
+                () => this.handleCreateUpdateCurrency()
+            )
+        );
     }
 
     render() {
@@ -118,14 +211,25 @@ class Settings extends Component {
             organization_data
         } = this.props;
         let bank = banks_data['items'][0] || {};
-        let payment_mode = payments_mode_data['items'][0] || {};
-        let currency = Data.find(function (currency) {
+        let payment_mode = payments_mode_data['items'][0] || {name: 'cash'};
+        let currency_object = Data.find(function (currency) {
             return currency['code'] === (currencies_data['items'][0] || {})['code'];
         });
+        let currency = undefined;
+        if (currency_object) {
+            currency = {
+                value: currency_object['code'],
+                label: currency_object.currency,
+                optionDisplay: currency_object.currency + '(' + currency_object.code + ')',
+            }
+        }
         let organization = organization_data['items'][0] || {};
+        let country_object = countries[organization['location']] || {};
         let location = {
+
             value: organization['location'],
-            label: (countries[organization['location']] || {})['name']
+            label: country_object['name'],
+            optionDisplay: country_object.name + '(' + country_object.native + ')',
         };
         if (!countries[organization['location']]) {
             location = undefined;
@@ -163,7 +267,7 @@ class Settings extends Component {
             />;
         }
 
-        if (organization_data['isFetching']) {
+        if (organization_data['isFetching'] || payments_mode_data['isFetching'] || currencies_data['isFetching']) {
             return <ComponentLoadingIndicator/>;
         }
         return (
@@ -203,7 +307,7 @@ class Settings extends Component {
                                 <FormControl fullWidth>
                                     <InputLabel id="payment-method-select-label">Payment method</InputLabel>
                                     <Select fullWidth name="payment_mode" labelId="payment-method-select-label"
-                                            defaultValue="cash" required={true}>
+                                            defaultValue={payment_mode['name']} required={true}>
                                         <MenuItem value="cash">Cash</MenuItem>
                                         <MenuItem value="cheque">Cheque</MenuItem>
                                         <MenuItem value="credit card">Credit card</MenuItem>
