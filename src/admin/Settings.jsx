@@ -9,7 +9,7 @@ import {countries} from "countries-list";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import {serverBaseUrl} from "../functions/baseUrls";
 import {fetchDataIfNeeded, invalidateData, setSessionVariable} from "../actions/actions";
-import {extractResponseError, formDataToPayload, getUrlData} from "../functions/componentActions";
+import {extractResponseError, formDataToPayload, getUrlData, pushHistory} from "../functions/componentActions";
 import ComponentLoadingIndicator from "../components/ComponentLoadingIndicator";
 import $ from "jquery";
 import {postAPIRequest} from "../functions/APIRequests";
@@ -28,6 +28,7 @@ class Settings extends Component {
         this.fetchUrlData('banks_url', '/registration/banks/');
         this.fetchUrlData('currencies_url', '/registration/currency/');
         this.fetchUrlData('payments_mode_url', '/registration/payment_modes/');
+        this.fetchUrlData('chart_of_accounts_url', '/registration/chart_accounts/');
         this.fetchUrlData('organization_url', '/registration/organizations/');
     }
 
@@ -87,14 +88,18 @@ class Settings extends Component {
         );
     };
 
-    handleCreateUpdateCurrency = () => {
-        let selected_currency = Data.find((currency) => {
-           return currency['code'] === this.state.selected_currency
-        });
+    handleCreateUpdateCurrency = (callback) => {
         const {
             currencies_data
         } = this.props;
         let currencies = currencies_data['items'];
+        let selected_currency_code = this.state.selected_currency;
+        if (selected_currency_code === '' && currencies.length > 0) {
+            selected_currency_code = currencies[0]['code'];
+        }
+        let selected_currency = Data.find((currency) => {
+            return currency['code'] === selected_currency_code
+        });
         let request_method = 'POST';
         let currencies_url = serverBaseUrl() + '/registration/currency/';
         if (currencies.length > 0) {
@@ -108,22 +113,7 @@ class Settings extends Component {
         postAPIRequest(
             currencies_url,
             () => {
-                this.setState({
-                    message: true,
-                    message_text: 'Successfully updated settings',
-                    message_variant: 'success',
-                    activity: false
-                });
-                const {sessionVariables, dispatch} = this.props;
-                let organization_url = sessionVariables['organization_url'] || '';
-                let payments_mode_url = sessionVariables['payments_mode_url'] || '';
-                let currencies_url = sessionVariables['currencies_url'] || '';
-                dispatch(invalidateData(organization_url));
-                dispatch(invalidateData(payments_mode_url));
-                dispatch(invalidateData(currencies_url));
-                dispatch(fetchDataIfNeeded(organization_url));
-                dispatch(fetchDataIfNeeded(payments_mode_url));
-                dispatch(fetchDataIfNeeded(currencies_url));
+                callback();
             },
             (results) => {
                 let alert_message = extractResponseError(results);
@@ -182,6 +172,151 @@ class Settings extends Component {
         )
     };
 
+    handleCreateUpdateAccount = (name, type, gl_code, id = null, callback = null) => {
+        let payload = {
+            account_type: type,
+            account_name: name,
+            gl_code: gl_code,
+            manual_entries_allowed: 'no',
+        };
+        let chart_of_accounts_url = serverBaseUrl() + '/registration/chart_accounts/';
+        let request_method = 'POST';
+        if (id) {
+            chart_of_accounts_url = serverBaseUrl() + `/registration/chart_accounts/${id}/`;
+            request_method = 'PUT';
+        }
+        postAPIRequest(
+            chart_of_accounts_url,
+            (results) => {
+                if (callback) {
+                    callback(results);
+                }
+            },
+            (results) => {
+                let alert_message = extractResponseError(results);
+                this.setState({
+                    message: true,
+                    message_text: alert_message,
+                    message_variant: 'error',
+                    activity: false
+                });
+            },
+            payload,
+            {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.token
+            },
+            request_method
+        );
+    };
+
+    handleCreateAccounts = () => {
+        const {
+            chart_of_accounts_data,
+        } = this.props;
+        let chart_of_accounts = chart_of_accounts_data['items'];
+        let assets_accounts = chart_of_accounts.filter(function (account) {
+            return account['account_type'] === 1;
+        });
+        let capital_accounts = chart_of_accounts.filter(function (account) {
+            return account['account_type'] === 2;
+        });
+        let liabilities_accounts = chart_of_accounts.filter(function (account) {
+            return account['account_type'] === 3;
+        });
+        let income_accounts = chart_of_accounts.filter(function (account) {
+            return account['account_type'] === 4;
+        });
+        let expenses_accounts = chart_of_accounts.filter(function (account) {
+            return account['account_type'] === 5;
+        });
+        if (assets_accounts.length === 0) {
+            this.handleCreateUpdateAccount('Assets', 1, 1);
+        }
+        if (capital_accounts.length === 0) {
+            this.handleCreateUpdateAccount('Capital', 2, 2);
+        }
+        if (liabilities_accounts.length === 0) {
+            this.handleCreateUpdateAccount('Liabilities', 3, 3);
+        }
+        if (income_accounts.length === 0) {
+            this.handleCreateUpdateAccount('Income', 4, 4);
+        }
+        if (expenses_accounts.length === 0) {
+            this.handleCreateUpdateAccount('Expenses', 5, 5);
+        }
+    };
+
+    handleCreateUpdateBank = (bank_name) => {
+        this.handleCreateAccounts();
+        const {
+            banks_data
+        } = this.props;
+        let banks = banks_data['items'];
+        let request_method = 'POST';
+        let banks_url = serverBaseUrl() + '/registration/banks/';
+        let account_id = null;
+        if (banks.length > 0) {
+            request_method = 'PUT';
+            banks_url = serverBaseUrl() + `/registration/banks/${banks[0]['id']}/`;
+            account_id = banks[0]['gl_account'];
+        }
+        this.handleCreateUpdateAccount(
+            bank_name,
+            1,
+            10,
+            account_id,
+            (bank_gl) => {
+                let payload = {
+                    bank_name: bank_name,
+                    gl_account: bank_gl['id']
+                };
+                postAPIRequest(
+                    banks_url,
+                    (results) => {
+                        this.setState({
+                            message: true,
+                            message_text: 'Successfully updated settings',
+                            message_variant: 'success',
+                            activity: false
+                        });
+                        const {sessionVariables, dispatch} = this.props;
+                        let organization_url = sessionVariables['organization_url'] || '';
+                        let payments_mode_url = sessionVariables['payments_mode_url'] || '';
+                        let currencies_url = sessionVariables['currencies_url'] || '';
+                        let chart_of_accounts_url = sessionVariables['chart_of_accounts_url'] || '';
+                        let banks_url = sessionVariables['banks_url'] || '';
+                        dispatch(invalidateData(organization_url));
+                        dispatch(invalidateData(payments_mode_url));
+                        dispatch(invalidateData(currencies_url));
+                        dispatch(invalidateData(chart_of_accounts_url));
+                        dispatch(invalidateData(banks_url));
+                        dispatch(fetchDataIfNeeded(organization_url));
+                        dispatch(fetchDataIfNeeded(payments_mode_url));
+                        dispatch(fetchDataIfNeeded(currencies_url));
+                        dispatch(fetchDataIfNeeded(chart_of_accounts_url));
+                        dispatch(fetchDataIfNeeded(banks_url));
+                    },
+                    (results) => {
+                        let alert_message = extractResponseError(results);
+                        this.setState({
+                            message: true,
+                            message_text: alert_message,
+                            message_variant: 'error',
+                            activity: false
+                        });
+                    },
+                    payload,
+                    {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.token
+                    },
+                    request_method
+                );
+            }
+        )
+    };
+
     handleUpdateSettings(e) {
         e.preventDefault();
         this.setState({
@@ -198,7 +333,9 @@ class Settings extends Component {
             payload['mobile_no'],
             payload['country'],
             () => this.handleCreateUpdatePaymentMode(payload['payment_mode'],
-                () => this.handleCreateUpdateCurrency()
+                () => this.handleCreateUpdateCurrency(
+                    () => this.handleCreateUpdateBank(payload['bank'])
+                )
             )
         );
     }
@@ -208,12 +345,17 @@ class Settings extends Component {
             banks_data,
             payments_mode_data,
             currencies_data,
-            organization_data
+            organization_data,
+            chart_of_accounts_data
         } = this.props;
-        let bank = banks_data['items'][0] || {};
-        let payment_mode = payments_mode_data['items'][0] || {name: 'cash'};
+        let banks = banks_data['items'];
+        let payments_mode = payments_mode_data['items'];
+        let currencies = currencies_data['items'];
+        let chart_of_accounts = chart_of_accounts_data['items'];
+        let bank = banks[0] || {};
+        let payment_mode = payments_mode[0] || {name: 'cash'};
         let currency_object = Data.find(function (currency) {
-            return currency['code'] === (currencies_data['items'][0] || {})['code'];
+            return currency['code'] === (currencies[0] || {})['code'];
         });
         let currency = undefined;
         if (currency_object) {
@@ -265,9 +407,24 @@ class Settings extends Component {
                 message_variant={this.state.message_variant}
                 message_text={this.state.message_text}
             />;
+        } else if (
+            banks.length === 0 ||
+            payments_mode.length === 0 ||
+            currencies.length === 0 ||
+            chart_of_accounts === 0
+        ) {
+            message = <FormFeedbackMessage
+                message_variant="info"
+                message_text="You need to update your settings to continue with operations"
+            />;
         }
 
-        if (organization_data['isFetching'] || payments_mode_data['isFetching'] || currencies_data['isFetching']) {
+        if (
+            organization_data['isFetching'] ||
+            payments_mode_data['isFetching'] ||
+            currencies_data['isFetching'] ||
+            banks_data['isFetching']
+        ) {
             return <ComponentLoadingIndicator/>;
         }
         return (
@@ -350,7 +507,8 @@ Settings.propTypes = {
     banks_data: PropTypes.object.isRequired,
     payments_mode_data: PropTypes.object.isRequired,
     currencies_data: PropTypes.object.isRequired,
-    organization_data: PropTypes.object.isRequired
+    organization_data: PropTypes.object.isRequired,
+    chart_of_accounts_data: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -364,13 +522,15 @@ function mapStateToProps(state) {
     const payments_mode_data = retrieveUrlData('payments_mode_url', dataByUrl);
     const currencies_data = retrieveUrlData('currencies_url', dataByUrl);
     const organization_data = retrieveUrlData('organization_url', dataByUrl);
+    const chart_of_accounts_data = retrieveUrlData('chart_of_accounts_url', dataByUrl);
 
     return {
         sessionVariables,
         banks_data,
         payments_mode_data,
         currencies_data,
-        organization_data
+        organization_data,
+        chart_of_accounts_data
     }
 }
 

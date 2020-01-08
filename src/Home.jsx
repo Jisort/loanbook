@@ -7,7 +7,7 @@ import {
     setSessionVariable,
     fetchDataIfNeeded
 } from './actions/actions';
-import {getUrlData, dynamicSort} from "./functions/componentActions";
+import {getUrlData, dynamicSort, pushHistory} from "./functions/componentActions";
 import FormModal from "./components/FormModal";
 import {Button, Fab, Box, Tooltip, IconButton} from "@material-ui/core";
 import MaterialTable from 'material-table';
@@ -202,7 +202,8 @@ class Home extends Component {
             currencies_data,
             approved_loans_data,
             active_loans_data,
-            pending_disbursement_data
+            pending_disbursement_data,
+            chart_of_accounts_data
         } = this.props;
         let clients = clients_data['items'];
         let pending_loans = pending_loans_data['items'];
@@ -212,6 +213,15 @@ class Home extends Component {
         let approved_loans = approved_loans_data['items'];
         let active_loans = active_loans_data['items'];
         let pending_disbursement = pending_disbursement_data['items'];
+        let chart_of_accounts = chart_of_accounts_data['items'];
+        if (
+            banks.length === 0 ||
+            payments_mode.length === 0 ||
+            currencies.length === 0 ||
+            chart_of_accounts === 0
+        ) {
+            pushHistory(this.props, '/settings');
+        }
         clients.sort(dynamicSort('-approved_loans'));
         clients.sort(dynamicSort('-pending_disburse_loans'));
         clients.sort(dynamicSort('-pending_loans'));
@@ -331,6 +341,7 @@ Home.propTypes = {
     currencies_data: PropTypes.object.isRequired,
     approved_loans_data: PropTypes.object.isRequired,
     active_loans_data: PropTypes.object.isRequired,
+    chart_of_accounts_data: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -348,6 +359,7 @@ function mapStateToProps(state) {
     const currencies_data = retrieveUrlData('currencies_url', dataByUrl);
     const approved_loans_data = retrieveUrlData('approved_loans_url', dataByUrl);
     const active_loans_data = retrieveUrlData('active_loans_url', dataByUrl);
+    const chart_of_accounts_data = retrieveUrlData('chart_of_accounts_url', dataByUrl);
 
     return {
         sessionVariables,
@@ -359,6 +371,7 @@ function mapStateToProps(state) {
         currencies_data,
         approved_loans_data,
         active_loans_data,
+        chart_of_accounts_data
     }
 }
 
