@@ -20,7 +20,8 @@ import {
     AccountCircle as AccountCircleIcon,
     ViewList as ViewListIcon,
     ExitToApp as ExitToAppIcon,
-    Home as HomeIcon
+    Home as HomeIcon,
+    Assessment as AssessmentIcon
 } from '@material-ui/icons';
 import {Tooltip} from "@material-ui/core";
 
@@ -107,11 +108,17 @@ export default function MiniDrawer(props) {
             tooltipTitle: 'home',
             route: '/',
             onClick: props['handleLinkClick']
-        } ,{
+        }, {
             label: 'Loans',
             icon: <ViewListIcon/>,
             tooltipTitle: 'view loans',
             route: '/viewLoans',
+            onClick: props['handleLinkClick']
+        }, {
+            label: 'Reports',
+            icon: <AssessmentIcon/>,
+            tooltipTitle: 'view reports',
+            route: '/',
             onClick: props['handleLinkClick']
         }
     ];
