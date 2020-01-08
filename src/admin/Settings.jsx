@@ -9,7 +9,7 @@ import {countries} from "countries-list";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import {serverBaseUrl} from "../functions/baseUrls";
 import {fetchDataIfNeeded, invalidateData, setSessionVariable} from "../actions/actions";
-import {extractResponseError, formDataToPayload, getUrlData} from "../functions/componentActions";
+import {extractResponseError, formDataToPayload, getUrlData, pushHistory} from "../functions/componentActions";
 import ComponentLoadingIndicator from "../components/ComponentLoadingIndicator";
 import $ from "jquery";
 import {postAPIRequest} from "../functions/APIRequests";
@@ -345,12 +345,17 @@ class Settings extends Component {
             banks_data,
             payments_mode_data,
             currencies_data,
-            organization_data
+            organization_data,
+            chart_of_accounts_data
         } = this.props;
-        let bank = banks_data['items'][0] || {};
-        let payment_mode = payments_mode_data['items'][0] || {name: 'cash'};
+        let banks = banks_data['items'];
+        let payments_mode = payments_mode_data['items'];
+        let currencies = currencies_data['items'];
+        let chart_of_accounts = chart_of_accounts_data['items'];
+        let bank = banks[0] || {};
+        let payment_mode = payments_mode[0] || {name: 'cash'};
         let currency_object = Data.find(function (currency) {
-            return currency['code'] === (currencies_data['items'][0] || {})['code'];
+            return currency['code'] === (currencies[0] || {})['code'];
         });
         let currency = undefined;
         if (currency_object) {
@@ -401,6 +406,16 @@ class Settings extends Component {
             message = <FormFeedbackMessage
                 message_variant={this.state.message_variant}
                 message_text={this.state.message_text}
+            />;
+        } else if (
+            banks.length === 0 ||
+            payments_mode.length === 0 ||
+            currencies.length === 0 ||
+            chart_of_accounts === 0
+        ) {
+            message = <FormFeedbackMessage
+                message_variant="info"
+                message_text="You need to update your settings to continue with operations"
             />;
         }
 
