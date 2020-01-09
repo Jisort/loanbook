@@ -113,10 +113,8 @@ class FormLogin extends Component {
             activity: true
         });
         let email = '';
-        if (user['_provider'] === 'facebook') {
-            let profile = user['_profile'];
-            email = profile['email'];
-        }
+        let profile = user['_profile'];
+        email = profile['email'];
         localStorage.email = email;
         let check_login_url = serverBaseUrl() + `/registration/social_login/?email=${email}&check=${true}`;
         getAPIRequest(
@@ -174,13 +172,14 @@ class FormLogin extends Component {
             <Grid item xs={12}>
                 <Box display="flex" justifyContent="center">
                     <SocialLoginButton
-                        provider='facebook'
-                        appId='817524248668013'
+                        provider='google'
+                        appId='728448569900-o8kq5fpk4b92vtt4vp98bun9nb862klm.apps.googleusercontent.com'
                         onLoginSuccess={this.handleSocialLogin}
                         onLoginFailure={this.handleSocialLoginFailure}
                         styles={google_login_button_styles}
                         icon={mdiGoogle}
-                        color="#ffffff"
+                        iconColor="#ffffff"
+                        key={'google'}
                     >
                         Login with Google
                     </SocialLoginButton>
@@ -195,7 +194,8 @@ class FormLogin extends Component {
                         onLoginFailure={this.handleSocialLoginFailure}
                         styles={facebook_login_button_styles}
                         icon={mdiFacebook}
-                        color="#ffffff"
+                        iconColor="#ffffff"
+                        key={'facebook'}
                     >
                         Login with Facebook
                     </SocialLoginButton>

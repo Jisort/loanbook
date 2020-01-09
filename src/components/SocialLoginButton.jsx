@@ -30,7 +30,7 @@ function SocialButton(props) {
                 <Icon path={ButtonIcon}
                       size={1.1}
                       className={classes.extendedIcon}
-                      color={props['color']}
+                      color={props['iconColor']}
                 />
                 {children}
             </Fab>
