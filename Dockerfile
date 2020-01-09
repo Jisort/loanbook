@@ -6,9 +6,9 @@ RUN npm install
 COPY / ./
 RUN npm run build
 
-FROM nginx:1.17
+FROM nginx:alpine
 
-WORKDIR /usr/loanbook/
-COPY build/ /usr/share/nginx/html
+COPY /usr/loanbook/build/ /usr/share/nginx/html
 
-EXPOSE 5000
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
