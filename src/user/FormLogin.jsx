@@ -27,7 +27,7 @@ class FormLogin extends Component {
     componentDidMount() {
         const search = this.props.location.search;
         const params = new URLSearchParams(search);
-        if (params.get('old_login')) {
+        if (!params.get('old_login')) {
             this.setState({
                 old_login: true
             });
