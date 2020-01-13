@@ -1,5 +1,6 @@
 {
   "name": "loanbook",
+  "productName": "Loanbook",
   "description": "Simple lending app",
   "version": "0.0.1",
   "private": true,
