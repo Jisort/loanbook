@@ -58,6 +58,7 @@
     "@mdi/js": "^4.7.95",
     "@mdi/react": "^1.2.1",
     "electron": "^7.1.8",
+    "electron-builder": "^21.2.0",
     "electron-packager": "^14.1.1",
     "gh-pages": "^2.1.1"
   }
