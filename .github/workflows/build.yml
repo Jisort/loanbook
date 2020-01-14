@@ -30,7 +30,7 @@ jobs:
           # Log in to Snap Store
           snapcraft_token: ${{ secrets.snapcraft_token }}
 
-      - name: Build/release Electron app
+      - name: Build/release electron app
         uses: samuelmeuli/action-electron-builder@v1
         with:
           # GitHub token, automatically provided to the action
