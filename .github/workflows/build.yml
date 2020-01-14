@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 12
 
-      - name: Build/release Electron app
+      - name: Build/release Electron app ${{ github.ref }}
         uses: samuelmeuli/action-electron-builder@v1
         with:
           # GitHub token, automatically provided to the action
@@ -31,4 +31,4 @@ jobs:
 
           # If the commit is tagged with a version (e.g. "v1.0.0"),
           # release the app after building
-          release: ${{ github.ref }}
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
