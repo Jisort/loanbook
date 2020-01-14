@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
-import {Button, Card, CardContent, Container, FormControl, Grid, Paper, TextField} from "@material-ui/core";
+import {Box, Button, Card, CardContent, Container, FormControl, Grid, Link, Paper, TextField} from "@material-ui/core";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import FormFeedbackMessage from "../components/FormFeedbackMessage";
 import {extractResponseError, formDataToPayload, pushHistory} from "../functions/componentActions";
@@ -172,6 +172,15 @@ class FormSignUp extends Component {
                     <Grid item xs={12}>
                         <FormControl fullWidth>
                             {sign_up_button}
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <FormControl fullWidth>
+                            <Box display="flex" justifyContent="center">
+                                <Link href="#" onClick={() => pushHistory(this.props, '/login')}>
+                                    login
+                                </Link>
+                            </Box>
                         </FormControl>
                     </Grid>
                 </Grid>

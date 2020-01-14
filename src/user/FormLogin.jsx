@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Container, Card, CardContent, Button, Grid, Paper, Box, FormControl, TextField} from "@material-ui/core";
+import {Container, Card, CardContent, Button, Grid, Paper, Box, FormControl, TextField, Link} from "@material-ui/core";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import {withRouter} from "react-router-dom";
 import {postAPIRequest, getAPIRequest} from "../functions/APIRequests";
@@ -251,6 +251,15 @@ class FormLogin extends Component {
                         <Grid item xs={12}>
                             <FormControl fullWidth>
                                 {login_button}
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <Box display="flex" justifyContent="center">
+                                    <Link href="#" onClick={() => pushHistory(this.props, '/signUp')}>
+                                        create account
+                                    </Link>
+                                </Box>
                             </FormControl>
                         </Grid>
                     </Grid>
