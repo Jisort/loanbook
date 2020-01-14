@@ -71,6 +71,10 @@
     "gh-pages": "^2.1.1"
   },
   "build": {
-    "appId": "com.jisort.loanbook"
+    "appId": "com.jisort.loanbook",
+    "files": ["**/*", "build/icon.*"],
+    "directories": {
+      "buildResources": "assets"
+    }
   }
 }
