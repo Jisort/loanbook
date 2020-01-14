@@ -72,9 +72,6 @@
   },
   "build": {
     "appId": "com.jisort.loanbook",
-    "files": ["**/*", "build/icon.*"],
-    "directories": {
-      "buildResources": "assets"
-    }
+    "files": ["**/*", "assets/icon.*"]
   }
 }
