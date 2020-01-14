@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/6773e4e7-0b9f-49ac-af03-845331e89cce/deploy-status)](https://app.netlify.com/sites/loanbook/deploys)
+[![loanbook](https://snapcraft.io//loanbook/badge.svg)](https://snapcraft.io/loanbook)
 
 Simple loan management tool
 

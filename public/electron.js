@@ -1,4 +1,4 @@
-const { app, Menu, BrowserWindow } = require('electron');
+const { app, Menu, BrowserWindow, Tray, nativeImage } = require('electron');
 
 const path = require('path');
 const url = require('url');
@@ -97,6 +97,8 @@ function createWindow() {
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
     mainWindow.setIcon(path.join(__dirname, '../build/icon.png'));
     mainWindow.on('closed', () => mainWindow = null);
+    const iconPath = path.join(__dirname, '../build/icon.png');
+    mainWindow.tray = new Tray(nativeImage.createFromPath(iconPath));
 }
 
 app.on('ready', createWindow);
