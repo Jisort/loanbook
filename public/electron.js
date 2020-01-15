@@ -93,11 +93,11 @@ const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
 
 function createWindow() {
-    mainWindow = new BrowserWindow({width: 900, height: 680});
+    const iconPath = path.join(__dirname, '../assets/icon.png');
+    mainWindow = new BrowserWindow({width: 900, height: 680, icon: iconPath});
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
-    mainWindow.setIcon(path.join(__dirname, '../build/icon.png'));
+    mainWindow.setIcon(path.join(__dirname, '../assets/icon.png'));
     mainWindow.on('closed', () => mainWindow = null);
-    const iconPath = path.join(__dirname, '../build/icon.png');
     mainWindow.tray = new Tray(nativeImage.createFromPath(iconPath));
 }
 
