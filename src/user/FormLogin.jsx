@@ -178,7 +178,7 @@ class FormLogin extends Component {
                         onLoginFailure={this.handleSocialLoginFailure}
                         styles={google_login_button_styles}
                         icon={mdiGoogle}
-                        iconColor="#ffffff"
+                        iconcolor="#ffffff"
                         key={'google'}
                     >
                         Login with Google
@@ -194,7 +194,7 @@ class FormLogin extends Component {
                         onLoginFailure={this.handleSocialLoginFailure}
                         styles={facebook_login_button_styles}
                         icon={mdiFacebook}
-                        iconColor="#ffffff"
+                        iconcolor="#ffffff"
                         key={'facebook'}
                     >
                         Login with Facebook

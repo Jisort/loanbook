@@ -68,7 +68,8 @@ const template = [
             { role: 'zoomin' },
             { role: 'zoomout' },
             { type: 'separator' },
-            { role: 'togglefullscreen' }
+            { role: 'togglefullscreen' },
+            { role: 'toggledevtools' }
         ]
     },
     // { role: 'windowMenu' }
@@ -98,7 +99,7 @@ function createWindow() {
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
     mainWindow.setIcon(path.join(__dirname, '../assets/icon.png'));
     mainWindow.on('closed', () => mainWindow = null);
-    mainWindow.tray = new Tray(nativeImage.createFromPath(iconPath));
+    // mainWindow.tray = new Tray(nativeImage.createFromPath(iconPath));
 }
 
 app.on('ready', createWindow);
