@@ -68,8 +68,7 @@ const template = [
             { role: 'zoomin' },
             { role: 'zoomout' },
             { type: 'separator' },
-            { role: 'togglefullscreen' },
-            { role: 'toggledevtools' }
+            { role: 'togglefullscreen' }
         ]
     },
     // { role: 'windowMenu' }
