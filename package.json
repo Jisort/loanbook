@@ -2,7 +2,7 @@
   "name": "loanbook",
   "productName": "Loanbook",
   "description": "Simple lending app",
-  "version": "v0.0.6",
+  "version": "v0.0.7",
   "private": true,
   "main": "public/electron.js",
   "homepage": "./",
@@ -74,6 +74,16 @@
     "appId": "com.jisort.loanbook",
     "files": [
       "assets/*"
-    ]
+    ],
+    "win": {
+      "target": "appx"
+    },
+    "appx": {
+      "identityName": "loanbook",
+      "publisher": "CN=RyanadaLtd-5498",
+      "publisherDisplayName": "Ryanada LTD",
+      "applicationId": "9NN0MFWJ5FL5",
+      "displayName": "Loanbook"
+    }
   }
 }
