@@ -86,6 +86,48 @@ const template = [
                 { role: 'close' }
             ])
         ]
+    },
+    {
+        label: 'Settings',
+        submenu: [
+            {
+                label: 'Privacy policy',
+                click: async () => {
+                    const { shell } = require('electron');
+                    await shell.openExternal('https://www.jisort.com/platform-privacypolicy/')
+                }
+            }, {
+                label: 'Terms of service',
+                click: async () => {
+                    const { shell } = require('electron');
+                    await shell.openExternal('https://www.jisort.com/platform-terms-service/')
+                }
+            }
+        ]
+    },
+    {
+        role: 'help',
+        submenu: [
+            {
+                label: 'Privacy policy',
+                click: async () => {
+                    const { shell } = require('electron');
+                    await shell.openExternal('https://www.jisort.com/platform-privacypolicy/')
+                }
+            }, {
+                label: 'Terms of service',
+                click: async () => {
+                    const { shell } = require('electron');
+                    await shell.openExternal('https://www.jisort.com/platform-terms-service/')
+                }
+            }, {
+                label: 'Open help center',
+                click: async () => {
+                    const { shell } = require('electron');
+                    await shell.openExternal('https://jisort.atlassian.net/servicedesk/customer/portal/3')
+                }
+            }
+        ]
     }
 ];
 
