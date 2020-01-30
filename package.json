@@ -73,8 +73,12 @@
   "build": {
     "appId": "com.jisort.loanbook",
     "files": [
-      "assets/*"
+      "build/**/*",
+      "node_modules/**/*"
     ],
+    "directories": {
+      "buildResources": "assets"
+    },
     "win": {
       "target": "appx"
     },
