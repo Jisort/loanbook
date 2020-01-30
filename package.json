@@ -72,6 +72,9 @@
   },
   "build": {
     "appId": "com.jisort.loanbook",
+    "directories": {
+      "buildResources": "build"
+    },
     "win": {
       "target": "appx"
     },
