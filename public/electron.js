@@ -63,6 +63,7 @@ const template = [
     {
         label: 'View',
         submenu: [
+            { role: 'toggledevtools' },
             { type: 'separator' },
             { role: 'resetzoom' },
             { role: 'zoomin' },
