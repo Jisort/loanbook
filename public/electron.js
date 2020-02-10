@@ -139,6 +139,7 @@ function createWindow() {
     const iconPath = path.join(__dirname, '../assets/icon.png');
     mainWindow = new BrowserWindow({width: 900, height: 680, icon: iconPath});
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
+    // mainWindow.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
     mainWindow.setIcon(path.join(__dirname, '../assets/icon.png'));
     mainWindow.on('closed', () => mainWindow = null);
     // mainWindow.tray = new Tray(nativeImage.createFromPath(iconPath));

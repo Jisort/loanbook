@@ -5,12 +5,12 @@ import ViewLoans from "./loan/ViewLoans";
 import FormLogin from "./user/FormLogin";
 import FormSignUp from "./user/FormSignUp";
 import Settings from "./admin/Settings";
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {Route, Switch, MemoryRouter} from 'react-router-dom';
 import './App.css';
 
 function App() {
     return (
-        <Router>
+        <MemoryRouter>
             <Switch>
                 <Route exact path="/signUp" component={FormSignUp} key={1}/>
                 <Route exact path="/login" component={FormLogin} key={2}/>
@@ -22,7 +22,7 @@ function App() {
                     </Switch>
                 </Menu>
             </Switch>
-        </Router>
+        </MemoryRouter>
     );
 }
 
