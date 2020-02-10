@@ -1,4 +1,4 @@
-[![Download loanbook](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/loanbook/files/latest/download)
+![Build/release](https://github.com/Jisort/loanbook/workflows/Build/release/badge.svg)
 [![loanbook](https://snapcraft.io//loanbook/badge.svg)](https://snapcraft.io/loanbook)
 
 Simple loan management tool
