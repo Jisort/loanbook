@@ -31,7 +31,7 @@ module.exports = {
                 callback(countryCode);
             }
         } catch (e) {
-
+            callback('');
         }
     },
 

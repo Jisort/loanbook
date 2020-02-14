@@ -63,6 +63,7 @@ class FormLogin extends Component {
                         activity: false,
                         otp_form: true,
                         password_field: false,
+                        old_login: false,
                         message: true,
                         message_text: results['otp'],
                         message_variant: 'success'

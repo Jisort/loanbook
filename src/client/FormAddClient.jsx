@@ -21,6 +21,7 @@ import {
 } from "@material-ui/core";
 import DatePicker from "../components/DatePicker";
 import AutocompleteSelect from "../components/AutocompleteSelect";
+import AppLoadingIndicator from "../components/AppLoadingIndicator";
 
 class ClientDetailsForm extends Component {
 
@@ -35,13 +36,18 @@ class ClientDetailsForm extends Component {
             message: false,
             message_variant: 'info',
             message_text: null,
+            mobile_no: '',
+            loading: true
         };
     }
 
     componentDidMount() {
         lookup((country) => {
             let country_object = countries[country] || {};
-            document.querySelector('input[name=mobile_no]').value = '+' + country_object['phone'];
+            this.setState({
+                loading: false,
+                mobile_no: '+' + country_object['phone']
+            });
         })
     }
 
@@ -104,6 +110,9 @@ class ClientDetailsForm extends Component {
 
 
     render() {
+        if (this.state.loading) {
+            return <AppLoadingIndicator/>;
+        }
         let countries_list = Object.keys(countries).map(function (key) {
             let country = countries[key];
             return {
@@ -196,6 +205,7 @@ class ClientDetailsForm extends Component {
                                     <FormControl fullWidth>
                                         <TextField fullWidth type="text" label="Phone number"
                                                    name="mobile_no" ref="mobile_no" required={true}
+                                                   defaultValue={this.state.mobile_no}
                                         />
                                     </FormControl>
                                 </Grid>

@@ -3,10 +3,12 @@ import {withRouter} from "react-router-dom";
 import {Box, Button, Card, CardContent, Container, FormControl, Grid, Link, Paper, TextField} from "@material-ui/core";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import FormFeedbackMessage from "../components/FormFeedbackMessage";
-import {extractResponseError, formDataToPayload, pushHistory} from "../functions/componentActions";
+import {extractResponseError, formDataToPayload, lookup, pushHistory} from "../functions/componentActions";
 import $ from "jquery";
 import {serverBaseUrl} from "../functions/baseUrls";
 import {postAPIRequest} from "../functions/APIRequests";
+import {countries} from "countries-list";
+import AppLoadingIndicator from "../components/AppLoadingIndicator";
 
 class FormSignUp extends Component {
     constructor(props) {
@@ -17,8 +19,20 @@ class FormSignUp extends Component {
             message_text: null,
             message_variant: 'info',
             email: localStorage.email || null,
-            otp_form: false
+            otp_form: false,
+            phone_number: '',
+            loading: true
         }
+    }
+
+    componentDidMount() {
+        lookup((country) => {
+            let country_object = countries[country] || {};
+            this.setState({
+                loading: false,
+                phone_number: '+' + country_object['phone']
+            });
+        })
     }
 
     handleSubmitOTP(e) {
@@ -92,9 +106,7 @@ class FormSignUp extends Component {
             activity: true
         });
         let formData = new FormData($('form#sign-up-form')[0]);
-        let payload = {
-            email: localStorage.email
-        };
+        let payload = {};
         payload = formDataToPayload(formData, payload);
         let sign_up_url = serverBaseUrl() + '/registration/initial_setup/';
         payload['username'] = payload['email'];
@@ -103,7 +115,7 @@ class FormSignUp extends Component {
         payload['organization_slogan'] = '';
         payload['organization_type'] = 'other';
         payload['how_you_knew_about_us'] = 'google';
-        payload['system_use'] = 'full_system';
+        payload['system_use'] = 'loanbook';
         payload['location'] = '';
         payload['jisort_apps'] = true;
         postAPIRequest(
@@ -134,6 +146,9 @@ class FormSignUp extends Component {
         let otp_button = <Button variant="contained" color="primary" type="submit">
             Login
         </Button>;
+        if (this.state.loading) {
+            return <AppLoadingIndicator/>;
+        }
         if (this.state.activity) {
             sign_up_button = <FormActivityIndicator/>;
             otp_button = <FormActivityIndicator/>;
@@ -156,12 +171,12 @@ class FormSignUp extends Component {
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <FormControl fullWidth>
-                            <TextField type="email" label="Email" value={this.state.email}/>
+                            <TextField type="email" label="Email" name="email"/>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
                         <FormControl fullWidth>
-                            <TextField label="Phone number" name="phone_number"/>
+                            <TextField label="Phone number" name="phone_number" defaultValue={this.state.phone_number}/>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
