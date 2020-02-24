@@ -263,6 +263,15 @@ class FormLogin extends Component {
                                 </Box>
                             </FormControl>
                         </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <Box display="flex" justifyContent="center">
+                                    <Link href="https://my.jisort.com/reset_password/" target="_blank">
+                                        reset password
+                                    </Link>
+                                </Box>
+                            </FormControl>
+                        </Grid>
                     </Grid>
                 </div>
             </form>;

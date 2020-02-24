@@ -54,3 +54,8 @@
     background-color: #4267B2;
     color: #ffffff;
 }
+
+.fixedHeaderTable {
+    height: 80vh;
+    width: 100vw;
+}

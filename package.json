@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@date-io/moment": "^1.3.12",
-    "@material-ui/core": "^4.7.1",
+    "@material-ui/core": "^4.9.4",
     "@material-ui/icons": "^4.5.1",
     "@material-ui/lab": "^4.0.0-alpha.34",
     "@material-ui/pickers": "^3.2.8",
@@ -33,8 +33,10 @@
     "react-intl-tel-input": "^7.1.0",
     "react-redux": "^7.1.3",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.2.0",
+    "react-scripts": "^3.4.0",
     "react-social-login": "git+https://github.com/willymwai/react-social-login.git",
+    "react-sticky": "^6.0.3",
+    "react-to-print": "^2.5.1",
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0"
