@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {
     Table, Paper, TableHead,
     TableRow, TableCell, TableBody,
-    Grid, Box
+    Grid, Box, Fab
 } from '@material-ui/core';
 import moment from "moment";
 import {getUrlData, numberWithCommas, dynamicSort} from "../functions/componentActions";
@@ -12,6 +12,8 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import ComponentLoadingIndicator from "../components/ComponentLoadingIndicator";
+import ReactToPrint from 'react-to-print';
+import {Print} from '@material-ui/icons';
 
 class LoanStatement extends Component {
 
@@ -88,8 +90,8 @@ class LoanStatement extends Component {
         let balance = 0;
 
         let statement_body = <TableRow>
-                <TableCell colSpan={5}><ComponentLoadingIndicator/></TableCell>
-            </TableRow>;
+            <TableCell colSpan={5}><ComponentLoadingIndicator/></TableCell>
+        </TableRow>;
         if (!loan_ledgers_data['isFetching'] && !loan_schedule_data['isFetching']) {
             statement_body = statement_ledgers.map((ledger, key) => {
                 if (ledger['debit']) {
@@ -111,59 +113,68 @@ class LoanStatement extends Component {
         }
 
         return (
-            <Paper>
-                <Grid container>
-                    <Grid item xs={12}>
-                        <Box display="flex" justifyContent="center" className="bold">
-                            {loan['member_name']}
-                        </Box>
+            <div>
+                <ReactToPrint
+                    trigger={() => <Fab variant="extended" color="default">
+                        <Print/>
+                        Print
+                    </Fab>}
+                    content={() => this.componentRef}
+                />
+                <Paper ref={el => (this.componentRef = el)}>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Box display="flex" justifyContent="center" className="bold">
+                                {loan['member_name']}
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box display="flex" justifyContent="center" className="bold">
+                                Loan statement
+                            </Box>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                        <Box display="flex" justifyContent="center" className="bold">
-                            Loan statement
-                        </Box>
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <Box display="flex" justifyContent="flex-start" m={1}>
+                                <Box className="bold">Statement date:</Box><Box>{today_date}</Box>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box display="flex" justifyContent="flex-end" m={1}>
+                                <Box className="bold">Account no:</Box><Box>{loan['loan_reference_no']}</Box>
+                            </Box>
+                        </Grid>
                     </Grid>
-                </Grid>
-                <Grid container>
-                    <Grid item xs={6}>
-                        <Box display="flex" justifyContent="flex-start" m={1}>
-                            <Box className="bold">Statement date:</Box><Box>{today_date}</Box>
-                        </Box>
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <Box display="flex" justifyContent="flex-start" m={1}>
+                                <Box className="bold">Days in arrears:</Box><Box>12</Box>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box display="flex" justifyContent="flex-end" m={1}>
+                                <Box className="bold">Outstanding balance:</Box>
+                                <Box>{numberWithCommas(loan['outstanding_balance'])}</Box>
+                            </Box>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Box display="flex" justifyContent="flex-end" m={1}>
-                            <Box className="bold">Account no:</Box><Box>{loan['loan_reference_no']}</Box>
-                        </Box>
-                    </Grid>
-                </Grid>
-                <Grid container>
-                    <Grid item xs={6}>
-                        <Box display="flex" justifyContent="flex-start" m={1}>
-                            <Box className="bold">Days in arrears:</Box><Box>12</Box>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Box display="flex" justifyContent="flex-end" m={1}>
-                            <Box className="bold">Outstanding balance:</Box>
-                            <Box>{numberWithCommas(loan['outstanding_balance'])}</Box>
-                        </Box>
-                    </Grid>
-                </Grid>
-                <Table stickyHeader>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Date</TableCell>
-                            <TableCell align="right">Details</TableCell>
-                            <TableCell align="right">Payment</TableCell>
-                            <TableCell align="right">Charges</TableCell>
-                            <TableCell align="right">Balance</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {statement_body}
-                    </TableBody>
-                </Table>
-            </Paper>
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Date</TableCell>
+                                <TableCell align="right">Details</TableCell>
+                                <TableCell align="right">Payment</TableCell>
+                                <TableCell align="right">Charges</TableCell>
+                                <TableCell align="right">Balance</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {statement_body}
+                        </TableBody>
+                    </Table>
+                </Paper>
+            </div>
         )
     }
 }

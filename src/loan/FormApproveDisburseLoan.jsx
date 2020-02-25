@@ -69,7 +69,10 @@ class ApproveLoanForm extends Component {
                     activity: false
                 });
                 const {sessionVariables, dispatch} = this.props;
+                let not_reversed_loans_url = sessionVariables['not_reversed_loans_url'] || '';
                 let pending_disbursement_url = sessionVariables['pending_disbursement_url'] || '';
+                dispatch(invalidateData(not_reversed_loans_url));
+                dispatch(fetchDataIfNeeded(not_reversed_loans_url));
                 dispatch(invalidateData(pending_disbursement_url));
                 dispatch(fetchDataIfNeeded(pending_disbursement_url));
                 let active_loans_url = sessionVariables['active_loans_url'] || '';
@@ -104,8 +107,11 @@ class ApproveLoanForm extends Component {
             () => {
                 const {sessionVariables, dispatch} = this.props;
                 let pending_disbursement_url = sessionVariables['pending_disbursement_url'] || '';
+                let not_reversed_loans_url = sessionVariables['not_reversed_loans_url'] || '';
                 dispatch(invalidateData(pending_disbursement_url));
                 dispatch(fetchDataIfNeeded(pending_disbursement_url));
+                dispatch(invalidateData(not_reversed_loans_url));
+                dispatch(fetchDataIfNeeded(not_reversed_loans_url));
                 callback();
             },
             (results) => {
@@ -153,7 +159,10 @@ class ApproveLoanForm extends Component {
                     }
                 });
                 const {sessionVariables, dispatch} = this.props;
+                let not_reversed_loans_url = sessionVariables['not_reversed_loans_url'] || '';
                 let pending_loans_url = sessionVariables['pending_loans_url'] || '';
+                dispatch(invalidateData(not_reversed_loans_url));
+                dispatch(fetchDataIfNeeded(not_reversed_loans_url));
                 dispatch(invalidateData(pending_loans_url));
                 dispatch(fetchDataIfNeeded(pending_loans_url));
             },

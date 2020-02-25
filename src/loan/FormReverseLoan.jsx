@@ -42,8 +42,11 @@ class FormReverseLoan extends Component {
                 });
                 const {sessionVariables, dispatch} = this.props;
                 let active_loans_url = sessionVariables['active_loans_url'] || '';
+                let not_reversed_loans_url = sessionVariables['not_reversed_loans_url'] || '';
                 dispatch(invalidateData(active_loans_url));
                 dispatch(fetchDataIfNeeded(active_loans_url));
+                dispatch(invalidateData(not_reversed_loans_url));
+                dispatch(fetchDataIfNeeded(not_reversed_loans_url));
                 $("form#reverse-loan")[0].reset();
             },
             (results) => {

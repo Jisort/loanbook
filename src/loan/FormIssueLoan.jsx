@@ -183,8 +183,11 @@ class FormIssueLoan extends Component {
                     $("form#issue-loan-form")[0].reset();
                     const {sessionVariables, dispatch} = this.props;
                     let pending_loans_url = sessionVariables['pending_loans_url'] || '';
+                    let not_reversed_loans_url = sessionVariables['not_reversed_loans_url'] || '';
                     dispatch(invalidateData(pending_loans_url));
                     dispatch(fetchDataIfNeeded(pending_loans_url));
+                    dispatch(invalidateData(not_reversed_loans_url));
+                    dispatch(fetchDataIfNeeded(not_reversed_loans_url));
                 },
                 (results) => {
                     let alert_message = extractResponseError(results);

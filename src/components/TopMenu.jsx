@@ -15,6 +15,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Badge from '@material-ui/core/Badge';
 import {
     Settings as SettingsIcon,
     AccountCircle as AccountCircleIcon,
@@ -107,18 +108,21 @@ export default function MiniDrawer(props) {
             icon: <HomeIcon/>,
             tooltipTitle: 'home',
             route: '/',
+            badge: '',
             onClick: props['handleLinkClick']
         }, {
             label: 'Loans',
             icon: <ViewListIcon/>,
             tooltipTitle: 'view loans',
             route: '/viewLoans',
+            badge: '',
             onClick: props['handleLinkClick']
         }, {
             label: 'Reports',
             icon: <AssessmentIcon/>,
             tooltipTitle: 'view reports',
             route: '/customReports',
+            badge: <Badge badgeContent="new" color="error"/>,
             onClick: props['handleLinkClick']
         }
     ];
@@ -129,6 +133,7 @@ export default function MiniDrawer(props) {
             icon: <AccountCircleIcon/>,
             tooltipTitle: 'my profile',
             route: '/',
+            badge: '',
             onClick: props['handleLinkClick']
         },
         {
@@ -136,6 +141,7 @@ export default function MiniDrawer(props) {
             icon: <ExitToAppIcon/>,
             tooltipTitle: 'exit app',
             route: '/',
+            badge: '',
             onClick: props['handleLogout']
         },
         {
@@ -143,6 +149,7 @@ export default function MiniDrawer(props) {
             icon: <SettingsIcon/>,
             tooltipTitle: 'view settings',
             route: '/settings',
+            badge: '',
             onClick: props['handleLinkClick']
         }
     ];
@@ -198,7 +205,7 @@ export default function MiniDrawer(props) {
                     {upper_menu_items.map((item, index) => (
                         <ListItem button key={index} onClick={(e) => item['onClick'](e, item['route'])}>
                             <Tooltip title={item['tooltipTitle']}>
-                                <ListItemIcon>{item['icon']}</ListItemIcon>
+                                <ListItemIcon>{item['icon']}{item['badge']}</ListItemIcon>
                             </Tooltip>
                             <ListItemText primary={item['label']}/>
                         </ListItem>
@@ -209,7 +216,7 @@ export default function MiniDrawer(props) {
                     {lower_menu_items.map((item, index) => (
                         <ListItem button key={index} onClick={(e) => item['onClick'](e, item['route'])}>
                             <Tooltip title={item['tooltipTitle']}>
-                                <ListItemIcon>{item['icon']}</ListItemIcon>
+                                <ListItemIcon>{item['icon']}{item['badge']}</ListItemIcon>
                             </Tooltip>
                             <ListItemText primary={item['label']}/>
                         </ListItem>

@@ -2,25 +2,26 @@ import React, {Component} from "react";
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {extractResponseError, getUrlData, UTCToLocalTime} from "../functions/componentActions";
+import {extractResponseError, formDataToPayload, getUrlData, UTCToLocalTime} from "../functions/componentActions";
 import {serverBaseUrl} from "../functions/baseUrls";
 import {fetchDataIfNeeded, setSessionVariable} from "../actions/actions";
 import {
     Button, FormControl, Grid,
     Table, TableBody, TableCell,
     TableRow, TableHead,
-    TableContainer, Typography, Fab
+    TableContainer, Typography, Fab,
+    Box, Select, MenuItem, InputLabel
 } from "@material-ui/core";
 import FormFeedbackMessage from "../components/FormFeedbackMessage";
 import AutocompleteSelect from "../components/AutocompleteSelect";
 import DatePicker from "../components/DatePicker";
-import AppLoadingIndicator from "../components/AppLoadingIndicator";
+import ComponentLoadingIndicator from "../components/ComponentLoadingIndicator";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import {getAPIRequest} from "../functions/APIRequests";
-import $ from "jquery";
 import moment from "moment";
 import ReactToPrint from 'react-to-print';
 import {Print} from '@material-ui/icons';
+import $ from "jquery";
 
 class CustomReports extends Component {
     constructor(props) {
@@ -31,7 +32,8 @@ class CustomReports extends Component {
             message_variant: 'info',
             message_text: null,
             selected_report: null,
-            report_data: []
+            report_data: [],
+            report_inputs: []
         }
     }
 
@@ -68,13 +70,30 @@ class CustomReports extends Component {
         this.setState({
             activity: true
         });
-        let formData = new FormData($("form#custom-reports-form")[0]);
         let data = {};
-        formData.forEach(function (value, key) {
-            data[key] = value;
-        });
-        let url_params = encodeURIComponent(JSON.stringify(data));
+        let formData = new FormData($('form#custom-reports-form')[0]);
+        data = formDataToPayload(formData, data);
         let selected_report = this.state.selected_report;
+        let report_filters = selected_report['filterfield_set'];
+        report_filters.forEach((filter) => {
+            let filter_name = filter['field'] + '_filter_value';
+            let filter_name2 = filter['field'] + '_filter_value2';
+            if (filter['filter_value'] === "" && this.state[filter_name]) {
+                if (filter['field_type'] === 'DateField') {
+                    data[filter_name] = moment(this.state[filter_name]).format('YYYY-MM-DD');
+                } else {
+                    data[filter_name] = this.state[filter_name];
+                }
+                if (filter['filter_type'] === "range" && this.state[filter_name2]) {
+                    if (filter['field_type'] === 'DateField') {
+                        data[filter_name2] = moment(this.state[filter_name2]).format('YYYY-MM-DD');
+                    } else {
+                        data[filter_name2] = this.state[filter_name2];
+                    }
+                }
+            }
+        });
+        let url_params = new URLSearchParams(data).toString();
         let url = serverBaseUrl() + `/report_builder/api/report/${selected_report['id']}/generate/?${url_params}`;
         getAPIRequest(url, (results) => {
             this.setState({
@@ -93,8 +112,10 @@ class CustomReports extends Component {
     }
 
     render() {
-        if (this.state.loading) {
-            return <AppLoadingIndicator/>;
+        const {custom_reports_data} = this.props;
+        let custom_reports = custom_reports_data['items'];
+        if (custom_reports_data['isFetching']) {
+            return <ComponentLoadingIndicator/>;
         }
         let generate_report_button = <Button variant="contained" color="primary" type="submit">
             Generate report
@@ -102,8 +123,6 @@ class CustomReports extends Component {
         if (this.state.activity) {
             generate_report_button = <FormActivityIndicator/>;
         }
-        let columns = [];
-        let report_title = '';
         let date_range_filters = '';
         let select_filters = '';
         let date_lte_gte_filters = '';
@@ -137,7 +156,7 @@ class CustomReports extends Component {
                 }
                 let date_lte_gte_name = date_lte_gte_filter.field + '_filter_value';
                 let label_name = `${exclude}${date_lte_gte_filter['field_verbose']} ${from_to}`;
-                return <Grid item xs={12} key={key}>
+                return <Grid item xs={6} key={key}>
                     <DatePicker
                         label={label_name}
                         value={this.state[date_lte_gte_name] || null}
@@ -189,24 +208,25 @@ class CustomReports extends Component {
                     </Grid>
                 ]
             });
-                        select_filters = select_filter.map((select_filter) => {
-                        let options = select_filter['select_list'].map(function (option) {
-                        return <option value={option.id}>{option.display}</option>
-                    });
-                        let exclude = '';
-                        if (select_filter.exclude) {
-                        exclude = 'exclude ';
-                    }
+            select_filters = select_filter.map((select_filter) => {
+                let options = select_filter['select_list'].map(function (option) {
+                    return <MenuItem value={option.id}>{option.display}</MenuItem>
+                });
+                let exclude = '';
+                if (select_filter.exclude) {
+                    exclude = 'exclude ';
+                }
                 let field_name = select_filter.path.replace(/__/g, ' ');
                 field_name = field_name.replace(/_/g, ' ');
                 let field_ref = select_filter.path + select_filter.field + '_filter_value';
-                return <div className="form-group col-md-4">
-                    <label>{exclude}{field_name}</label>
-                    <select className="form-control" name={field_ref} ref={field_ref}>
-                        <option/>
+                return <Grid item xs={6}>
+                    <InputLabel id="filter-select-label">{exclude}{field_name}</InputLabel>
+                    <Select fullWidth className="form-control" name={field_ref} ref={field_ref}
+                            labelId="filter-select-label">
+                        <MenuItem>select option</MenuItem>
                         {options}
-                    </select>
-                </div>
+                    </Select>
+                </Grid>
             });
         }
         let message = '';
@@ -216,9 +236,6 @@ class CustomReports extends Component {
                 message_text={this.state.message_text}
             />;
         }
-
-        const {custom_reports_data} = this.props;
-        let custom_reports = custom_reports_data['items'];
         custom_reports = custom_reports.filter(function (report) {
             return report.name.startsWith('loanbook - ');
         });
@@ -232,13 +249,11 @@ class CustomReports extends Component {
         });
         let report = '';
         let thead = '';
-        let colspan = 0;
         if (this.state.report_data['data'] && this.state.report_data['meta']) {
             let data = this.state.report_data.data;
             let meta = this.state.report_data.meta;
             let titles = meta['titles'];
-            colspan = titles.length;
-            let selected_report =  this.state.selected_report;
+            let selected_report = this.state.selected_report;
             let displayfield_set = selected_report['displayfield_set'];
             thead = titles.map(function (title, key) {
                 return <TableCell key={key}>{title}</TableCell>
@@ -251,7 +266,7 @@ class CustomReports extends Component {
                         cell = row[key];
                     }
                     if (displayfield['field_type'] === "DateField") {
-                        cell = UTCToLocalTime(cell, moment, null ,'YYYY-MM-DD');
+                        cell = UTCToLocalTime(cell, moment, null, 'YYYY-MM-DD');
                     } else if (displayfield['field_type'] === "DateTimeField") {
                         cell = UTCToLocalTime(cell, moment);
                     }
@@ -289,34 +304,38 @@ class CustomReports extends Component {
             <TableContainer className="fixedHeaderTable">
                 <Grid container>
                     <Grid item xs={12}>
-                        {message}
-                        <form id="custom-reports-form" onSubmit={(e) => this.handleGenerateReport(e)}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12}>
-                                    <FormControl fullWidth>
-                                        <AutocompleteSelect
-                                            label="Report"
-                                            optionLabel="label"
-                                            data={custom_reports_list}
-                                            onChange={(value) => this.handleReportChange(value)}
-                                        />
-                                    </FormControl>
+                        <Box m={2}>
+                            {message}
+                            <form id="custom-reports-form" onSubmit={(e) => this.handleGenerateReport(e)}>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12}>
+                                        <FormControl fullWidth>
+                                            <AutocompleteSelect
+                                                label="Report"
+                                                optionLabel="label"
+                                                data={custom_reports_list}
+                                                onChange={(value) => this.handleReportChange(value)}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    {date_lte_gte_filters}
+                                    {date_range_filters}
+                                    {select_filters}
+                                    <Grid item xs={12}>
+                                        <FormControl fullWidth>
+                                            {generate_report_button}
+                                        </FormControl>
+                                    </Grid>
                                 </Grid>
-                                {date_lte_gte_filters}
-                                {date_range_filters}
-                                {select_filters}
+                            </form>
+                            <Grid container>
                                 <Grid item xs={12}>
-                                    <FormControl fullWidth>
-                                        {generate_report_button}
-                                    </FormControl>
+                                    <Box mt={5}>
+                                        {report}
+                                    </Box>
                                 </Grid>
                             </Grid>
-                        </form>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                {report}
-                            </Grid>
-                        </Grid>
+                        </Box>
                     </Grid>
                 </Grid>
             </TableContainer>
