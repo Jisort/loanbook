@@ -216,9 +216,9 @@ class Home extends Component {
         let chart_of_accounts = chart_of_accounts_data['items'];
         if (
             (banks.length === 0 && !banks_data['isFetching']) ||
-            (payments_mode.length && !payments_mode_data['isFetching']) === 0 ||
-            (currencies.length && !currencies_data['isFetching']) === 0 ||
-            (chart_of_accounts && !chart_of_accounts_data['isFetching']) === 0
+            (payments_mode.length === 0 && !payments_mode_data['isFetching']) ||
+            (currencies.length === 0 && !currencies_data['isFetching']) ||
+            (chart_of_accounts.length === 0 && !chart_of_accounts_data['isFetching'])
         ) {
             pushHistory(this.props, '/settings');
         }

@@ -67,10 +67,13 @@ class FormAddPayment extends Component {
                 let loan_ledgers_url = sessionVariables['loan_ledgers_url'] || '';
                 let loan_schedule_url = sessionVariables['loan_schedule_url'] || '';
                 let active_loans_url = sessionVariables['active_loans_url'] || '';
+                let not_reversed_loans_url = sessionVariables['not_reversed_loans_url'] || '';
                 dispatch(invalidateData(loan_ledgers_url));
                 dispatch(invalidateData(loan_schedule_url));
                 dispatch(invalidateData(active_loans_url));
                 dispatch(fetchDataIfNeeded(active_loans_url));
+                dispatch(invalidateData(not_reversed_loans_url));
+                dispatch(fetchDataIfNeeded(not_reversed_loans_url));
                 $("form#add-payment")[0].reset();
             },
             (results) => {

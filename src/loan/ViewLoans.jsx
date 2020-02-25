@@ -4,11 +4,11 @@ import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import MaterialTable from "material-table";
-import {getUrlData, numberWithCommas} from "../functions/componentActions";
+import {getUrlData, numberWithCommas, UTCToLocalTime} from "../functions/componentActions";
 import {serverBaseUrl} from "../functions/baseUrls";
 import {fetchDataIfNeeded, setSessionVariable} from "../actions/actions";
 import moment from "moment";
-import {Receipt, Payment, Delete} from "@material-ui/icons";
+import {Receipt, Payment, Delete, Check} from "@material-ui/icons";
 import Modal from "../components/Modal";
 import LoanStatement from "./LoanStatement";
 import FormAddPayment from "../payment/FormAddPayment";
@@ -28,7 +28,7 @@ class ViewLoans extends Component {
     }
 
     componentDidMount() {
-        this.fetchUrlData('active_loans_url', '/products/applied_loans/?status=1');
+        this.fetchUrlData('not_reversed_loans_url', '/products/applied_loans/?status__in=1,7,9,6,11');
         this.fetchUrlData('banks_url', '/registration/banks/');
         this.fetchUrlData('payments_mode_url', '/registration/payment_modes/');
         this.fetchUrlData('currencies_url', '/registration/currency/');
@@ -55,8 +55,14 @@ class ViewLoans extends Component {
 
     renderActionButtons = (rowData) => {
         let selected_client = {id: rowData['member']};
-        return <Box display="flex" justifyContent="flex-end">
-            <Tooltip title="Loan statement">
+        let loan_statement_button = <IconButton aria-label="statement" disabled>
+            <Receipt/>
+        </IconButton>;
+        let loan_payment_button = <IconButton aria-label="payment" disabled>
+            <Payment/>
+        </IconButton>;
+        if ([1, 7, '1', '7', 11, '11'].indexOf(rowData['status']) !== -1) {
+            loan_statement_button = <Tooltip title="Loan statement">
                 <IconButton aria-label="statement"
                             onClick={() => this.setState({
                                 selected_loan: rowData
@@ -65,8 +71,10 @@ class ViewLoans extends Component {
                 >
                     <Receipt/>
                 </IconButton>
-            </Tooltip>
-            <Tooltip title="Add payment">
+            </Tooltip>;
+        }
+        if ([1, '1'].indexOf(rowData['status']) !== -1) {
+            loan_payment_button = <Tooltip title="Add payment">
                 <IconButton aria-label="payment"
                             onClick={() => this.setState({
                                 selected_loan: rowData,
@@ -76,7 +84,11 @@ class ViewLoans extends Component {
                 >
                     <Payment/>
                 </IconButton>
-            </Tooltip>
+            </Tooltip>;
+        }
+        return <Box display="flex" justifyContent="flex-end">
+            {loan_statement_button}
+            {loan_payment_button}
             <Tooltip title="Reverse loan">
                 <IconButton aria-label="reverse"
                             onClick={() => this.setState({
@@ -92,17 +104,16 @@ class ViewLoans extends Component {
 
     render() {
         const {
-            active_loans_data,
+            not_reversed_loans_data,
             banks_data,
             payments_mode_data,
             currencies_data,
         } = this.props;
-        let active_loans = active_loans_data['items'];
+        let not_reversed_loans = not_reversed_loans_data['items'];
         let banks = banks_data['items'];
         let payments_mode = payments_mode_data['items'];
         let currencies = currencies_data['items'];
         let loans_columns = [{
-
             field: 'member_name',
             title: 'Client',
         }, {
@@ -116,11 +127,11 @@ class ViewLoans extends Component {
         }, {
             field: 'date_of_loan_application',
             title: 'Applied on',
-            render: rowData => moment(rowData['date_of_loan_application']).format('DD-MMM-YYYY')
+            render: rowData => UTCToLocalTime(rowData['date_of_loan_application'], moment, null, 'YYYY-MM-DD')
         }, {
             field: 'disbursement_date',
             title: 'Disbursed on',
-            render: rowData => moment(rowData['disbursement_date']).format('DD-MMM-YYYY')
+            render: rowData => UTCToLocalTime(rowData['disbursement_date'], moment, null, 'YYYY-MM-DD')
         }, {
             field: '',
             title: '',
@@ -131,10 +142,10 @@ class ViewLoans extends Component {
             <div>
                 <Box mt={2}>
                     <MaterialTable
-                        isLoading={active_loans_data['isFetching']}
+                        isLoading={not_reversed_loans_data['isFetching']}
                         title="Loans"
                         columns={loans_columns}
-                        data={active_loans}
+                        data={not_reversed_loans}
                     />
                 </Box>
                 <Modal
@@ -181,7 +192,7 @@ class ViewLoans extends Component {
 ViewLoans.propTypes = {
     sessionVariables: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
-    active_loans_data: PropTypes.object.isRequired,
+    not_reversed_loans_data: PropTypes.object.isRequired,
     banks_data: PropTypes.object.isRequired,
     payments_mode_data: PropTypes.object.isRequired,
     currencies_data: PropTypes.object.isRequired
@@ -194,14 +205,14 @@ function mapStateToProps(state) {
     }
 
     const {sessionVariables, dataByUrl} = state;
-    const active_loans_data = retrieveUrlData('active_loans_url', dataByUrl);
+    const not_reversed_loans_data = retrieveUrlData('not_reversed_loans_url', dataByUrl);
     const banks_data = retrieveUrlData('banks_url', dataByUrl);
     const payments_mode_data = retrieveUrlData('payments_mode_url', dataByUrl);
     const currencies_data = retrieveUrlData('currencies_url', dataByUrl);
 
     return {
         sessionVariables,
-        active_loans_data,
+        not_reversed_loans_data,
         banks_data,
         payments_mode_data,
         currencies_data
