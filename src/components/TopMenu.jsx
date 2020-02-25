@@ -205,7 +205,9 @@ export default function MiniDrawer(props) {
                     {upper_menu_items.map((item, index) => (
                         <ListItem button key={index} onClick={(e) => item['onClick'](e, item['route'])}>
                             <Tooltip title={item['tooltipTitle']}>
-                                <ListItemIcon>{item['icon']}{item['badge']}</ListItemIcon>
+                                <ListItemIcon>
+                                    <div>{item['icon']}{item['badge']}</div>
+                                </ListItemIcon>
                             </Tooltip>
                             <ListItemText primary={item['label']}/>
                         </ListItem>
@@ -216,7 +218,9 @@ export default function MiniDrawer(props) {
                     {lower_menu_items.map((item, index) => (
                         <ListItem button key={index} onClick={(e) => item['onClick'](e, item['route'])}>
                             <Tooltip title={item['tooltipTitle']}>
-                                <ListItemIcon>{item['icon']}{item['badge']}</ListItemIcon>
+                                <ListItemIcon>
+                                    <div>{item['icon']}{item['badge']}</div>
+                                </ListItemIcon>
                             </Tooltip>
                             <ListItemText primary={item['label']}/>
                         </ListItem>
