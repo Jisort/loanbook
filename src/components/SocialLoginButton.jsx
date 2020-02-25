@@ -7,6 +7,8 @@ import Icon from '@mdi/react';
 function SocialButton(props) {
 
     const {children, triggerLogin} = props;
+    const childProps = { ...props };
+    delete childProps.triggerLogin;
 
     const useStyles = makeStyles(theme => ({
         root: {
@@ -25,12 +27,12 @@ function SocialButton(props) {
     return (
         <div>
             <Fab variant="extended" style={props['styles']}
-                 onClick={triggerLogin} {...props}
+                 onClick={triggerLogin} {...childProps}
             >
                 <Icon path={ButtonIcon}
                       size={1.1}
                       className={classes.extendedIcon}
-                      color={props['iconColor']}
+                      color={props['iconcolor']}
                 />
                 {children}
             </Fab>

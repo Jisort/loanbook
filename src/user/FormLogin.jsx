@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Container, Card, CardContent, Button, Grid, Paper, Box, FormControl, TextField} from "@material-ui/core";
+import {Container, Card, CardContent, Button, Grid, Paper, Box, FormControl, TextField, Link} from "@material-ui/core";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import {withRouter} from "react-router-dom";
 import {postAPIRequest, getAPIRequest} from "../functions/APIRequests";
@@ -63,6 +63,7 @@ class FormLogin extends Component {
                         activity: false,
                         otp_form: true,
                         password_field: false,
+                        old_login: false,
                         message: true,
                         message_text: results['otp'],
                         message_variant: 'success'
@@ -178,7 +179,7 @@ class FormLogin extends Component {
                         onLoginFailure={this.handleSocialLoginFailure}
                         styles={google_login_button_styles}
                         icon={mdiGoogle}
-                        iconColor="#ffffff"
+                        iconcolor="#ffffff"
                         key={'google'}
                     >
                         Login with Google
@@ -194,7 +195,7 @@ class FormLogin extends Component {
                         onLoginFailure={this.handleSocialLoginFailure}
                         styles={facebook_login_button_styles}
                         icon={mdiFacebook}
-                        iconColor="#ffffff"
+                        iconcolor="#ffffff"
                         key={'facebook'}
                     >
                         Login with Facebook
@@ -251,6 +252,24 @@ class FormLogin extends Component {
                         <Grid item xs={12}>
                             <FormControl fullWidth>
                                 {login_button}
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <Box display="flex" justifyContent="center">
+                                    <Link href="#" onClick={() => pushHistory(this.props, '/signUp')}>
+                                        create account
+                                    </Link>
+                                </Box>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <Box display="flex" justifyContent="center">
+                                    <Link href="https://my.jisort.com/reset_password/" target="_blank">
+                                        reset password
+                                    </Link>
+                                </Box>
                             </FormControl>
                         </Grid>
                     </Grid>

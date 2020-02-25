@@ -31,7 +31,7 @@ module.exports = {
                 callback(countryCode);
             }
         } catch (e) {
-
+            callback('');
         }
     },
 
@@ -99,5 +99,15 @@ module.exports = {
         } else {
             return x
         }
+    },
+
+    /**
+     * @return {string}
+     */
+    UTCToLocalTime: function (utc_time, moment, object = null, format = 'YYYY-MM-DD h:mm a') {
+        if (utc_time === '' || utc_time === null) {
+            return '';
+        }
+        return moment.utc(utc_time).local().format(format);
     },
 };

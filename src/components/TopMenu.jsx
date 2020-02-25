@@ -118,7 +118,7 @@ export default function MiniDrawer(props) {
             label: 'Reports',
             icon: <AssessmentIcon/>,
             tooltipTitle: 'view reports',
-            route: '/',
+            route: '/customReports',
             onClick: props['handleLinkClick']
         }
     ];
