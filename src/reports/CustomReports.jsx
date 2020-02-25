@@ -96,19 +96,23 @@ class CustomReports extends Component {
         let url_params = new URLSearchParams(data).toString();
         let url = serverBaseUrl() + `/report_builder/api/report/${selected_report['id']}/generate/?${url_params}`;
         getAPIRequest(url, (results) => {
-            this.setState({
-                report_data: results,
-                activity: false
+                this.setState({
+                    report_data: results,
+                    activity: false
+                })
+            }, (results) => {
+                let alert_message = extractResponseError(results);
+                this.setState({
+                    alert: true,
+                    alert_message: alert_message,
+                    alert_class: 'alert alert-danger',
+                    activity: false
+                });
+            },
+            {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.token
             })
-        }, (results) => {
-            let alert_message = extractResponseError(results);
-            this.setState({
-                alert: true,
-                alert_message: alert_message,
-                alert_class: 'alert alert-danger',
-                activity: false
-            });
-        })
     }
 
     render() {
