@@ -25,7 +25,11 @@ module.exports = {
                     script.remove();
                 };
             };
-            loadJSONP('http://ipinfo.io?token=e6909d77aca84d', 'sendBack');
+            let protocol = 'http';
+            if (typeof window !== 'undefined') {
+                protocol = (window.location || {}).protocol;
+            }
+            loadJSONP(protocol + '//ipinfo.io?token=e6909d77aca84d', 'sendBack');
             window.sendBack = (resp) => {
                 const countryCode = (resp && resp.country) ? resp.country : '';
                 callback(countryCode);
