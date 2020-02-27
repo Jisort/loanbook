@@ -9,7 +9,7 @@ import {countries} from "countries-list";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import {serverBaseUrl} from "../functions/baseUrls";
 import {fetchDataIfNeeded, invalidateData, setSessionVariable} from "../actions/actions";
-import {extractResponseError, formDataToPayload, getUrlData, pushHistory} from "../functions/componentActions";
+import {countries_overwrite, extractResponseError, formDataToPayload, getUrlData, pushHistory} from "../functions/componentActions";
 import ComponentLoadingIndicator from "../components/ComponentLoadingIndicator";
 import $ from "jquery";
 import {postAPIRequest} from "../functions/APIRequests";
@@ -395,8 +395,8 @@ class Settings extends Component {
             let country = countries[key];
             return {
                 value: key,
-                label: country.name,
-                optionDisplay: country.name + '(' + country.native + ')',
+                label: (countries_overwrite(key) || country).name,
+                optionDisplay: (countries_overwrite(key) || country).name + '(' + country.native + ')',
                 phone: '+' + country.phone
             }
         });

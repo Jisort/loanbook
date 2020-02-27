@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import moment from "moment";
 import {countries} from 'countries-list';
-import {extractResponseError, lookup, formDataToPayload} from "../functions/componentActions";
+import {extractResponseError, lookup, formDataToPayload, countries_overwrite} from "../functions/componentActions";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import $ from 'jquery';
 import {serverBaseUrl} from "../functions/baseUrls";
@@ -117,8 +117,8 @@ class ClientDetailsForm extends Component {
             let country = countries[key];
             return {
                 value: key,
-                label: country.name,
-                optionDisplay: country.name + '(' + country.native + ')',
+                label: (countries_overwrite(key) || country).name,
+                optionDisplay: (countries_overwrite(key) || country).name + '(' + country.native + ')',
                 phone: '+' + country.phone
             }
         });

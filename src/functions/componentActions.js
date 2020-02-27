@@ -110,4 +110,10 @@ module.exports = {
         }
         return moment.utc(utc_time).local().format(format);
     },
+    countries_overwrite: function (key) {
+        let countries_overwrite =  {
+            'TW': {name: 'Taiwan, China'}
+        };
+        return countries_overwrite[key];
+    }
 };
