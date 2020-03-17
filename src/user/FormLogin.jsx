@@ -9,6 +9,7 @@ import $ from "jquery";
 import FormFeedbackMessage from "../components/FormFeedbackMessage";
 import SocialLoginButton from "../components/SocialLoginButton";
 import {mdiGoogle, mdiFacebook} from '@mdi/js';
+import Footer from "../components/Footer";
 
 class FormLogin extends Component {
     constructor(props) {
@@ -315,6 +316,7 @@ class FormLogin extends Component {
                             </CardContent>
                         </Card>
                     </Grid>
+                    <Footer/>
                 </Container>
             </Paper>
         )
