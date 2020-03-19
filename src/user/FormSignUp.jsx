@@ -1,6 +1,17 @@
 import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
-import {Box, Button, Card, CardContent, Container, FormControl, Grid, Link, Paper, TextField} from "@material-ui/core";
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Container,
+    FormControl,
+    Grid,
+    Link,
+    Paper,
+    TextField
+} from "@material-ui/core";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import FormFeedbackMessage from "../components/FormFeedbackMessage";
 import {extractResponseError, formDataToPayload, lookup, pushHistory} from "../functions/componentActions";
@@ -9,6 +20,7 @@ import {serverBaseUrl} from "../functions/baseUrls";
 import {postAPIRequest} from "../functions/APIRequests";
 import {countries} from "countries-list";
 import AppLoadingIndicator from "../components/AppLoadingIndicator";
+import Footer from "../components/Footer";
 
 class FormSignUp extends Component {
     constructor(props) {
@@ -176,7 +188,8 @@ class FormSignUp extends Component {
                     </Grid>
                     <Grid item xs={12}>
                         <FormControl fullWidth>
-                            <TextField label="Phone number" name="phone_number" defaultValue={this.state.phone_number}/>
+                            <TextField label="Phone number" name="phone_number"
+                                       defaultValue={this.state.phone_number}/>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
@@ -192,9 +205,10 @@ class FormSignUp extends Component {
                     <Grid item xs={12}>
                         <FormControl fullWidth>
                             <Box display="flex" justifyContent="center">
-                                <Link href="#" onClick={() => pushHistory(this.props, '/login')}>
+                                <Button variant="outlined" color="primary"
+                                        onClick={() => pushHistory(this.props, '/login')}>
                                     login
-                                </Link>
+                                </Button>
                             </Box>
                         </FormControl>
                     </Grid>
@@ -243,6 +257,7 @@ class FormSignUp extends Component {
                             </CardContent>
                         </Card>
                     </Grid>
+                    <Footer/>
                 </Container>
             </Paper>
         )

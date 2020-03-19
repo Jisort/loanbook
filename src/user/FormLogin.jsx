@@ -1,5 +1,16 @@
 import React, {Component} from "react";
-import {Container, Card, CardContent, Button, Grid, Paper, Box, FormControl, TextField, Link} from "@material-ui/core";
+import {
+    Container,
+    Card,
+    CardContent,
+    Button,
+    Grid,
+    Paper,
+    Box,
+    FormControl,
+    TextField,
+    Link
+} from "@material-ui/core";
 import FormActivityIndicator from "../components/FormActivityIndicator";
 import {withRouter} from "react-router-dom";
 import {postAPIRequest, getAPIRequest} from "../functions/APIRequests";
@@ -10,6 +21,8 @@ import FormFeedbackMessage from "../components/FormFeedbackMessage";
 import SocialLoginButton from "../components/SocialLoginButton";
 import {mdiGoogle, mdiFacebook} from '@mdi/js';
 import Footer from "../components/Footer";
+import SimpleGDPR from 'simple-gdpr';
+import 'simple-gdpr/dist/simplegdpr.min.css';
 
 class FormLogin extends Component {
     constructor(props) {
@@ -26,6 +39,20 @@ class FormLogin extends Component {
     }
 
     componentDidMount() {
+        if (!localStorage.accept_cookies) {
+            const notice = new SimpleGDPR({
+                theme: 'modern',
+                icons: false,
+                animation: 'slide',
+                float: 'bottom-right',
+                link: 'https://www.jisort.com/platform-privacypolicy/',
+                callback: () => {
+                    localStorage.accept_cookies = true
+                    notice.close();
+                },
+            });
+        }
+
         const search = this.props.location.search;
         const params = new URLSearchParams(search);
         if (!params.get('old_login')) {
@@ -258,9 +285,10 @@ class FormLogin extends Component {
                         <Grid item xs={12}>
                             <FormControl fullWidth>
                                 <Box display="flex" justifyContent="center">
-                                    <Link href="#" onClick={() => pushHistory(this.props, '/signUp')}>
+                                    <Button variant="outlined" color="primary"
+                                            onClick={() => pushHistory(this.props, '/signUp')}>
                                         create account
-                                    </Link>
+                                    </Button>
                                 </Box>
                             </FormControl>
                         </Grid>
@@ -269,6 +297,21 @@ class FormLogin extends Component {
                                 <Box display="flex" justifyContent="center">
                                     <Link href="https://my.jisort.com/reset_password/" target="_blank">
                                         reset password
+                                    </Link>
+                                </Box>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <Box display="flex" justifyContent="center">
+                                    <Link href="https://www.jisort.com/loanbook/" target="_blank">
+                                        about us
+                                    </Link>&nbsp;.&nbsp;
+                                    <Link href="https://www.jisort.com/platform-privacypolicy/" target="_blank">
+                                        privacy policy
+                                    </Link>&nbsp;.&nbsp;
+                                    <Link href="https://www.jisort.com/platform-terms-service/" target="_blank">
+                                        terms of service
                                     </Link>
                                 </Box>
                             </FormControl>
